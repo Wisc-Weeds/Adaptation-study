@@ -1,0 +1,230 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(ggthemes)
+library(lme4)
+library(lmerTest)
+library(lsmeans)
+library(car)
+library(agricolae)
+library(multcomp)
+```
+
+
+```{r include=FALSE}
+Data=read_csv("Alldata.csv")
+```
+
+```{r include=FALSE}
+Data <- Data %>% 
+  filter(state != "havelock")
+```
+
+# Gender
+
+```{r}
+Data1 <- Data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(state, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally() %>% 
+  mutate(Perc=(n/nn)*100) 
+```
+
+```{r}
+GrantJune = data.frame(FEM = 33,
+                     MALE = 38)
+chisq.test(GrantJune)
+
+
+GrantJuly = data.frame(FEM = 27,
+                     MALE = 36)
+chisq.test(GrantJuly)
+
+
+
+
+ClayJuly = data.frame(FEM = 37,
+                     MALE = 34)
+chisq.test(ClayJuly)
+
+ClayJune = data.frame(FEM = 33,
+                     MALE = 37)
+chisq.test(ClayJune)
+
+
+
+
+
+HavelockJune = data.frame(FEM = 14,
+                     MALE = 19)
+chisq.test(HavelockJune)
+
+
+
+
+MacombJuly = data.frame(FEM = 13,
+                     MALE = 22)
+chisq.test(MacombJuly)
+
+MacombJune = data.frame(FEM = 36,
+                     MALE = 34)
+chisq.test(MacombJune)
+
+
+ArlingtonJuly = data.frame(FEM = 30,
+                     MALE = 39)
+chisq.test(ArlingtonJuly)
+
+ArlingtonJune = data.frame(FEM = 33,
+                     MALE = 38)
+chisq.test(ArlingtonJune)
+```
+
+
+
+
+
+```{r}
+Data1$state <- factor(Data1$state, levels=c("grant", "clay center", "havelock", "macomb", "arlington"), labels=c("Grant", "Clay Center", "Lincoln", "Macomb", "Arlington"))
+ggplot(Data1, aes(x=gender, y=Perc, fill=gender)) + geom_bar(stat="identity", width=0.3) + facet_wrap(planting~state, ncol=4) + labs(x="gender", y="Percentage (%)") + theme(legend.position = "none") + theme_solarized() + ggsave("gender.png", units="in", width=12, height=6, dpi=600)
+```
+
+
+
+
+
+
+
+
+# Resultado Geral
+
+
+
+```{r}
+Data$state <- factor(Data$state, levels=c("grant", "clay center", "havelock", "macomb", "arlington"), labels=c("Grant, NE", "Clay Center, NE", "Lincoln, NE", "Macomb, IL", "Arlington, WI"))
+```
+
+
+```{r echo=FALSE, warning=FALSE, width=12, height=6}
+ggplot(Data, aes(x=crop, y=weight, fill=crop)) + geom_boxplot() + 
+  #geom_violin() + 
+  stat_summary(fun.y=mean, fill="red", geom="point", 
+                           shape=21, size=3, show_guide = FALSE) + 
+  scale_x_discrete(breaks=c(0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750)) +
+  facet_wrap(planting~state, ncol=5) + scale_fill_brewer(palette = "Set3") +
+  theme_wsj() + theme(legend.position="none", strip.text = element_text(size=14, face="bold")) + labs(x="", y="Biomass (g)") +
+  ggsave("Adaptation.png", units="in", width=12, height=6, dpi=600)
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+model1=lmer(weight ~ crop * state * planting + (1|plant), data=Data)
+#summary(model1)
+plot(ranef(model1))
+shapiro.test(Data$weight)
+Anova(model1, test.statistic = "F", type = "II")
+lsmeans(model1, ~ crop | planting | state, contr="pairwise", adjust="none")
+
+```
+
+
+
+
+# Arlington
+
+```{r echo=FALSE}
+Arlington <- Data %>% 
+  filter(state == "arlington")
+
+model2=lmer(weight ~ crop * planting + (1|plant), data=Arlington)
+#summary(model1)
+plot(ranef(model2))
+shapiro.test(Arlington$weight)
+Anova(model2, test.statistic = "F", type = "II")
+lsmeans(model2, "crop", contr="pairwise", adjust="none")
+lsmeans(model2, "planting", contr="pairwise", adjust="none")
+```
+
+
+
+# Macomb
+
+```{r echo=FALSE}
+Macomb <- Data %>% 
+  filter(state == "macomb")
+
+model3=lmer(weight ~ crop * planting + (1|plant), data=Macomb)
+#summary(model1)
+plot(ranef(model3))
+shapiro.test(Macomb$weight)
+Anova(model3, test.statistic = "F", type = "II")
+lsmeans(model3, ~ crop | planting, contr="pairwise", adjust="none")
+```
+
+
+# Grant
+
+```{r echo=FALSE}
+Grant <- Data %>% 
+  filter(state == "grant")
+
+model4=lmer(weight ~ crop * planting + (1|plant), data=Grant)
+#summary(model1)
+plot(ranef(model4))
+shapiro.test(Grant$weight)
+A=Anova(model4, test.statistic = "F", type = "II")
+Grantlsm<-lsmeans(model4, ~ crop | planting, contr="pairwise", adjust="none")
+cld(Grantlsm, by="crop", Letters=letters, adjust="none", reversed=TRUE, sort=TRUE)
+
+library(multcomp)
+ph <- glht(A, linfct = mcp(ind = "Tukey"))
+cld(ph)
+```
+
+
+# Clay Center
+
+```{r echo=FALSE}
+Clay <- Data %>% 
+  filter(state == "clay center")
+
+model5=lmer(weight ~ crop * planting + (1|plant), data=Clay)
+#summary(model1)
+plot(ranef(model5))
+shapiro.test(Clay$weight)
+Anova(model5, test.statistic = "F", type = "II")
+lsmeans(model5, ~ crop | planting, contr="pairwise", adjust="none")
+```
+
+
+
+# Havelock
+
+```{r echo=FALSE}
+Havelock <- Data %>% 
+  filter(state == "havelock")
+
+model6=lmer(weight ~ crop * planting + (1|plant), data=Clay)
+#summary(model1)
+plot(ranef(model6))
+shapiro.test(Havelock$weight)
+Anova(model6, test.statistic = "F", type = "II")
+lsmeans(model6, ~ crop | planting, contr="pairwise", adjust="none")
+```

@@ -1,0 +1,283 @@
+---
+title: "Results"
+author: "Maxwel Coura Oliveira"
+date: "10/3/2019"
+output: pdf_document
+---
+
+```{r include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(ggpubr)
+library(bestNormalize)
+library(ggthemes)
+library(nortest)
+library(pbkrtest)
+```
+
+```{r include=FALSE}
+data <- read_csv("Data.csv") %>% 
+  drop_na(weight)
+data$year <- factor(data$year)
+glimpse(data)
+```
+
+```{r warning=FALSE}
+data %>% 
+#  filter(location == "clay center") %>% 
+ggplot() + aes(x=doyh, y=weight, color=planting, size=height) + geom_jitter(alpha=0.5) +  facet_wrap(location~crop, ncol = 3, scales = "free_y") + theme_bw() + geom_smooth(method = "lm") +
+  ggsave("biomass.pdf", height=18, width=9)
+#  geom_vline(xintercept = 182, linetype="dotted", 
+#                color = "blue", size=1.5)
+```
+
+
+
+
+# Testing Normality
+```{r}
+ggdensity(data$weight)
+pearson.test(data$weight)
+pearson.test(data$weight)
+```
+
+```{r}
+ggdensity(log(data$weight))
+
+pearson.test(log(data$weight))
+pearson.test(data$weight) 
+```
+
+```{r}
+databn <- bestNormalize(data$weight)
+data$biomass <- databn$x.t
+ggdensity(data$biomass)
+```
+
+
+
+```{r}
+pearson.test(data$biomass)
+pearson.test(data$biomass)
+```
+
+
+```{r}
+ggplot(data, aes(x=crop, y=weight, color=crop)) + geom_jitter(alpha=0.4) +
+  geom_boxplot() +
+   coord_flip() + theme_bw() +
+  facet_grid(year~planting~location) 
+```
+
+
+
+```{r warning=FALSE}
+Model <- lmer(log(weight) ~ crop*planting*location + (1|year:plant), data=data)
+summary(Model)
+anova(Model)
+```
+
+```{r}
+Model1 <- lmer(log(weight) ~ crop*planting + (1|year:plant), data=data)
+```
+
+
+
+```{r}
+PBmodcomp(Model1, Model, nsim=500, cl=2) 
+```
+
+
+```{r}
+anova(Model)
+```
+
+
+
+```{r}
+lsm <- emmeans(Model, ~ crop * planting | location ,  adjust="none", type="response")
+lsm
+```
+
+
+```{r warning=FALSE}
+cld <- CLD(lsm, adjust="none", Letters = letters, reversed = TRUE, type="response")
+cld
+
+#write_csv(cld, path="cld.csv")
+```
+
+
+```{r}
+cld$location <- factor(cld$location, levels = c("grant", "clay center",  "havelock", "macomb",  "arlington"), labels=c("Grant, NE", "Clay Center, NE",  "Lincoln, NE", "Macomb, IL", "Arlington, WI"))
+
+cld$crop <- factor(cld$crop, levels = c("corn", "soybean", "fallow"), labels=c("corn", "soybean", "fallow"))
+cld$planting <- factor(cld$planting, levels =c("June", "July"), labels=c("June", "July"))
+```
+
+
+
+```{r}
+ggplot(cld, aes(x=crop, y=response, color=crop, label=.group)) + 
+  geom_point(size=3) + theme_bw() + labs(x="", y=expression(paste("Plamer amaranth (g plant"^"-1",")"))) +
+  geom_errorbar(aes(ymin=lower.CL, ymax=upper.CL), width=0.1, size=1) +
+  geom_text(nudge_y = c(100, 80, 80, 70, 40, 30, 200, 170, 100, 70, 60, 50, 260, 100, 100, 
+                        100, 80, 50, 140, 100, 90, 50, 60, 50, 100, 80, 70, 70, 60, 60), size=6) +
+  facet_grid(planting~location) + coord_flip() +
+  scale_color_manual(values = c("blue", "darkgreen", "black", "orange", "red")) +
+  theme(legend.position = "none", strip.text = element_text(size=18, face="bold"), axis.title = element_text(size=18),
+        axis.text.x = element_text(size=17, angle = 45, hjust = 1), axis.text.y = element_text(size=17)) +
+  ggsave("adaptation.png", height=8, width=20, dpi=600)
+```
+
+
+
+
+```{r}
+data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) 
+```
+
+
+
+
+```{r}
+arlington1 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "arlington" & planting == "June")
+
+  chisq.test(arlington1$n)
+  
+  
+  
+arlington2 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "arlington" & planting == "July")
+
+  chisq.test(arlington2$n) 
+```
+
+
+
+
+
+```{r}
+macomb1 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "macomb" & planting == "June")
+
+chisq.test(macomb1$n)
+  
+  
+  
+macomb2 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "macomb" & planting == "July")
+
+chisq.test(macomb2$n) 
+```
+
+```{r}
+havelock1 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "havelock" & planting == "June")
+
+chisq.test(havelock1$n)
+  
+  
+  
+havelock2 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "havelock" & planting == "July")
+
+chisq.test(havelock2$n) 
+```
+
+```{r}
+clay1 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "clay center" & planting == "June")
+
+chisq.test(clay1$n)
+  
+  
+  
+clay2 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "clay center" & planting == "July")
+
+chisq.test(clay2$n) 
+```
+
+
+
+```{r}
+grant1 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "grant" & planting == "June")
+
+chisq.test(grant1$n)
+  
+  
+  
+grant2 <- data %>% 
+  filter(!is.na(gender)) %>% 
+  group_by(location, planting) %>% 
+  count(gender, na.rm=TRUE) %>% 
+  add_tally(name="nn") %>% 
+  mutate(Perc=(n/nn)*100) %>% 
+  filter(location == "grant" & planting == "July")
+
+chisq.test(grant2$n)
+```
+
+
+
+
+
+
+
+

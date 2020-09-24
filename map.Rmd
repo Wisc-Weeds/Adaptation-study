@@ -1,0 +1,68 @@
+---
+title: "map"
+author: "Maxwel Coura Oliveira"
+date: "2/1/2019"
+output: html_document
+---
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+library(scales)
+library(ggthemes)
+library(usmap)
+library(ggmap)
+library(ggrepel)
+library(maps)
+library(grid)
+library(mapdata)
+library(maptools)
+library(stringr)
+library(dplyr)
+library(ggsn)
+library(choroplethr)
+```
+
+ 
+
+```{r include=FALSE, warning=FALSE}
+region <-c("Arlington, WI", "Macomb, IL", "Grant, NE", "Lincoln, NE", "Clay Center, NE")
+Latitude <-c(43.335148, 40.45921,  40.83999664, 40.806862, 40.51999792)
+Longitude <-c(-89.372523, -90.6718, -101.722330444, -96.681679, -98.052999788)
+
+Map<-data.frame(region, Latitude, Longitude)
+```
+
+
+```{r include=FALSE}
+states = map_data("state")
+df <- subset(states, region %in% c("wisconsin", "nebraska", "illinois", "iowa"))
+```
+
+```{r include=FALSE}
+counties <- map_data("county")
+midwest <- subset(counties, region %in% c("wisconsin", "nebraska", "illinois", "iowa"))
+```
+
+```{r map, echo=FALSE}
+ggplot(data = df, mapping = aes(x = long, y = lat, group = group, color=region)) + 
+  geom_point(data=Map, mapping=aes(x=Longitude, y=Latitude, group=region, color=region), size=5) +
+  geom_polygon(data = midwest, fill = "NA", color = "gray") +
+  geom_polygon(color = "black", fill = NA) + scale_color_brewer(palette=c("Set1")) +
+  labs(fill="", y="", x="", caption="") +
+  north(df, location = 'topright', symbol = 1, anchor = c(x = -86, y = 47.3)) +
+  theme_map() + 
+  scalebar(data=df, dist = 100, dist_unit="km", model = 'International', location = "bottomleft", transform = TRUE) + 
+  annotate("text", x = -101, y = 38, label = "Figure: Maxwel C Oliveira", size=4) +
+      theme(axis.text=element_blank(), 
+        axis.title=element_blank(), 
+        panel.background = element_rect(fill="white", color = "black"), 
+        panel.grid.major = element_line(color = "white"), 
+  panel.grid.minor = element_blank(),
+  legend.position=c(0.05,0.8), legend.text = element_text(size = 20, colour = "black"), legend.key = element_rect(fill=NA), panel.border = element_rect(fill=NA,color="black", size=0.5, linetype="solid"),
+legend.background = element_rect(fill =NA), legend.key.width = unit(2.2, "line"), legend.title=element_blank()) +
+  ggsave("map.png", dpi=600, width=18, height=12)
+```
