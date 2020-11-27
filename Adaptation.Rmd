@@ -19,7 +19,7 @@ library(multcomp)
 
 
 ```{r include=FALSE}
-Data=read_csv("Alldata.csv")
+Data = read_csv("Alldata.csv")
 ```
 
 ```{r include=FALSE}

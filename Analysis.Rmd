@@ -25,6 +25,34 @@ data$year <- factor(data$year)
 glimpse(data)
 ```
 
+```{r}
+data %>% 
+  summarise(max(doyh) - min(doyh))
+```
+
+
+
+```{r}
+data %>% 
+  group_by(crop, location, planting) %>% 
+  summarise(mean = mean(weight), min = min(weight), max = max(weight)) %>% 
+  ggplot(aes(x=planting, y=mean, fill = planting)) +
+    geom_col() +
+  facet_grid(location ~ crop) +
+  coord_flip()
+```
+
+
+```{r}
+data %>% 
+  ggplot(aes(x = location, y = weight)) +
+  geom_bar(stat="identity", fun.y = "mean") +
+  facet_grid(planting ~ crop) +
+  coord_flip()
+```
+
+
+
 ```{r warning=FALSE}
 data %>% 
 #  filter(location == "clay center") %>% 
@@ -75,12 +103,16 @@ ggplot(data, aes(x=crop, y=weight, color=crop)) + geom_jitter(alpha=0.4) +
 
 
 ```{r warning=FALSE}
-Model <- lmer(log(weight) ~ crop*planting*location + (1|year:plant), data=data)
-summary(Model)
+new_dt <- data %>% 
+  filter(crop %in% "fallow",
+         planting %in% "June") 
+Model <- lmer(log(weight) ~ location + (1|year:location) + (1|plant:location), data= new_dt)
+#summary(Model)
 anova(Model)
 ```
 
 ```{r}
+
 Model1 <- lmer(log(weight) ~ crop*planting + (1|year:plant), data=data)
 ```
 
@@ -95,10 +127,13 @@ PBmodcomp(Model1, Model, nsim=500, cl=2)
 anova(Model)
 ```
 
+```{r}
+?emmeans
+```
 
 
 ```{r}
-lsm <- emmeans(Model, ~ crop * planting | location ,  adjust="none", type="response")
+lsm <- emmeans(Model, ~  location ,  adjust="none", type="response")
 lsm
 ```
 
