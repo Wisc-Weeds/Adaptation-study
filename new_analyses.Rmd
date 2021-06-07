@@ -1,0 +1,33 @@
+---
+title: "new_analses"
+author: "Maxwel Coura Oliveira"
+date: "6/7/2021"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+
+```{r}
+data <- read_csv("Data.csv")
+```
+
+```{r}
+data %>% 
+  filter(location != "grant") %>% 
+  mutate_if(is_character, as_factor) -> data1
+```
+
+
+```{r}
+data1 %>% 
+  ggplot(aes(x = crop, y = weight, color = crop)) +
+  geom_boxplot() +
+  geom_point() +
+  facet_grid(location ~ planting)
+```
+
