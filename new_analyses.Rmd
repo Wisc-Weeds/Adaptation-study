@@ -9,25 +9,105 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(drc)
+library(broom)
 ```
 
 
 ```{r}
-data <- read_csv("Data.csv")
+data <- read_csv("data2.csv")
 ```
+
 
 ```{r}
 data %>% 
-  filter(location != "grant") %>% 
-  mutate_if(is_character, as_factor) -> data1
+  filter(location != "grant") -> data1
+```
+
+```{r}
+data1 %>% 
+  rename(month = planting,
+         planting = planting_1) %>% 
+  mutate(planting = mdy(planting),
+         harvest = mdy(harvest),
+         doyp = yday(planting)) %>% 
+  mutate_if(is_character, as_factor) -> data2
 ```
 
 
 ```{r}
-data1 %>% 
-  ggplot(aes(x = crop, y = weight, color = crop)) +
-  geom_boxplot() +
+data2 %>% 
+  mutate(harvest = as.character(harvest)) %>% 
+  mutate(harvest = str_replace(harvest, "2018", "2019"),
+         harvest = ymd(harvest)) %>% 
+  filter(!is.na(harvest)) %>% 
+  dplyr::select(location, month, crop, harvest) %>% 
+  group_by(location, month, crop) %>% 
+  count(harvest, name = "harvest_day") -> harvest
+```
+
+
+```{r}
+data2 %>% 
+  filter(!is.na(harvest)) %>% 
+  dplyr::select(location, month, crop, harvest) %>% 
+  group_by(location, month, crop) %>% 
+  count(location, month, crop, name = "total") -> total
+```
+
+
+```{r}
+total %>% 
+  left_join(harvest) %>% 
+  mutate(prop = harvest_day / total) %>% 
+  mutate(lag = lag(prop)) %>% 
+  mutate(prob = cumsum(prop)) -> cum_sum
+```
+
+
+
+```{r}
+data2 %>% 
+  mutate(harvest = str_replace(harvest, "2018", "2019"),
+         harvest = ymd(harvest)) %>% 
+  filter(!is.na(harvest)) %>% 
+  left_join(cum_sum) %>% 
+  rename(harvest_com = harvest) %>% 
+  dplyr::select(-lag) -> data3
+```
+
+
+```{r}
+data3 %>% 
+  ggplot(aes(x = dap, y = prob, color = crop)) +
   geom_point() +
-  facet_grid(location ~ planting)
+  facet_grid(location ~ month)
+```
+
+
+# Arlington
+
+```{r}
+arlington <- data3 %>% 
+  filter(location == "arlington") %>% 
+  filter(month == "July")
+```
+
+```{r}
+model_arl <- drm(prob*100 ~ doyh, crop, fct = W2.3(), data = arlington)
+
+plot(model_arl, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
+     xlab = "Day of the year")
+```
+
+
+
+```{r}
+#broom::tidy(model_arl)
+summary(model_arl)
+```
+
+```{r}
+ED(model_arl, c(10, 50, 90), interval = "delta", type = "absolute")
 ```
 
