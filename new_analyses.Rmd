@@ -11,6 +11,8 @@ library(tidyverse)
 library(lubridate)
 library(drc)
 library(broom)
+library(tidytext)
+library(ggthemes)
 ```
 
 
@@ -83,31 +85,85 @@ data3 %>%
   geom_point() +
   facet_grid(location ~ month)
 ```
-
-
-# Arlington
-
 ```{r}
-arlington <- data3 %>% 
-  filter(location == "arlington") %>% 
-  filter(month == "July")
+car::leveneTest(prob ~ location, data = data3)
 ```
 
 ```{r}
-model_arl <- drm(prob*100 ~ doyh, crop, fct = W2.3(), data = arlington)
+data3 %>% 
+  unite("trt", c("location", "crop"), sep = "-") -> data4
+```
 
-plot(model_arl, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
+
+# June
+
+```{r}
+june <-  data4 %>% 
+  filter(month == "June")
+model <- drm(prob*100 ~ doyh, trt, fct = W2.3(fixed = c(NA, 100, NA)), data = june)
+
+plot(model, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
+     xlab = "Day of the year")
+```
+```{r}
+#broom::tidy(model_arl)
+summary(model)
+```
+
+```{r}
+ed_values <- ED(model, c(10, 50, 90), interval = "delta", type = "absolute")
+```
+
+```{r}
+ed_values %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., var = "name") %>% 
+  as_tibble() %>% 
+  separate(name, c("param", "trt", "ED"), sep = ":") %>% 
+  janitor::clean_names() -> ed_values1
+```
+
+
+```{r}
+ed_values1 %>% 
+  mutate_if(is_character, as_factor) %>% 
+  mutate(trt = reorder_within(trt, by = estimate, within = ed)) %>% 
+  ggplot(aes(x = trt, y = estimate)) +
+  scale_x_reordered() +
+  geom_point() +
+  geom_linerange(aes(ymin = lower, ymax = upper)) +
+  labs(y = NULL, x = NULL,
+       title = "DOY of 10, 50, and 90% Palmer amaranth flowering") +
+  coord_flip() +
+#  scale_color_brewer(palette = "Paired") +
+  facet_wrap(~ ed, scales = "free") +
+  theme_bw() +
+  theme(legend.position = "none") +
+  ggsave("june.png", width = 12, height = 5)
+```
+
+
+
+
+
+# July
+
+```{r}
+july <-  data4 %>% 
+  filter(month == "July")
+model1 <- drm(prob*100 ~ doyh, trt, fct = W2.3(fixed = c(NA, 100, NA)), data = july)
+
+plot(model1, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
      xlab = "Day of the year")
 ```
 
 
-
 ```{r}
 #broom::tidy(model_arl)
-summary(model_arl)
+summary(model1)
 ```
 
 ```{r}
-ED(model_arl, c(10, 50, 90), interval = "delta", type = "absolute")
+ed_values <- ED(model1, c(10, 50, 90), interval = "delta", type = "absolute")
 ```
 
