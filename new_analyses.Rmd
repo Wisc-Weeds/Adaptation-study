@@ -13,6 +13,7 @@ library(drc)
 library(broom)
 library(tidytext)
 library(ggthemes)
+library(ggtext)
 ```
 
 
@@ -120,27 +121,207 @@ ed_values %>%
   rownames_to_column(., var = "name") %>% 
   as_tibble() %>% 
   separate(name, c("param", "trt", "ED"), sep = ":") %>% 
-  janitor::clean_names() -> ed_values1
+  janitor::clean_names() %>% 
+  separate("trt", c("location", "crop"), sep = "-") %>% 
+  mutate(location = str_to_title(location)) %>% 
+  mutate_if(is_character, as_factor) -> ed_values1
+```
+
+  annotate("text", x = 0.65, y = 168, label = "June", 
+           color = "#8B8000", size = 2) +
+  annotate("text", x = 0.65, y = 197, label = "July", 
+           color = "#80461b", size = 2) +
+  annotate("text", x = 0.65, y = 228.5, label = "August", 
+           color = "darkgreen", size = 2) +
+  annotate("text", x = 0.65, y = 259, label = "September", 
+           color = "blue", size = 2) +
+
+
+```{r}
+label1 <- tibble(ed = "50% flowering", crop = "corn", 
+                   x = 3.5, y = 185, label = "Transplanting \nday")
+rect1 <- tibble(ed = "50% flowering", crop = "corn", 
+               x = 3.5, y = 153, xend = 3.5, yend = 165)
 ```
 
 
 ```{r}
+month <- tibble(ed = "90% flowering",
+                crop = "corn",
+                x = c(0.65, 0.65, 0.65, 0.65),
+                y = c(168, 197, 228.5, 259), 
+                label = c("June", "July", "August", "September"))
+
+
 ed_values1 %>% 
-  mutate_if(is_character, as_factor) %>% 
-  mutate(trt = reorder_within(trt, by = estimate, within = ed)) %>% 
-  ggplot(aes(x = trt, y = estimate)) +
+  filter(crop == "corn") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(crop,  ed) %>% 
+  mutate(location = reorder_within(location, 
+                                   by = estimate, 
+                                   within = ed)) %>% 
+  ggplot(aes(x = location, y = estimate)) +
   scale_x_reordered() +
-  geom_point() +
-  geom_linerange(aes(ymin = lower, ymax = upper)) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 153, ymax= 183), 
+            fill = "#FFFDD0", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 153, size = 1.1, 
+             color = "red",
+             alpha = 1) +
+  geom_point(size = 2) +
+  geom_linerange(aes(ymin = lower, ymax = upper), size = 1.2) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2, color = c("#8B8000", "#80461b", 
+                                  "darkgreen", "blue")) +
   labs(y = NULL, x = NULL,
-       title = "DOY of 10, 50, and 90% Palmer amaranth flowering") +
+       title = NULL) +
+  facet_grid(ed ~ crop, scales = "free_y") +
+  geom_curve(data = rect1, aes(x = x, y = y, 
+                               xend = xend, yend = yend),
+             arrow = arrow(length = unit(0.07, "inch")), 
+               size = 0.4, curvature = 0.3) + 
+  geom_text(data = label1, 
+            aes(x = x, y = y), 
+            size = 2,
+            label = label2$label, color = "red") +
   coord_flip() +
-#  scale_color_brewer(palette = "Paired") +
-  facet_wrap(~ ed, scales = "free") +
-  theme_bw() +
-  theme(legend.position = "none") +
-  ggsave("june.png", width = 12, height = 5)
+  theme_test() +
+  theme(legend.position = "none",
+        plot.title = element_markdown(),
+        strip.text = element_markdown(face = "bold"),
+        plot.title.position = "plot") -> p1c
 ```
+
+
+```{r}
+month <- tibble(ed = "90% flowering",
+                crop = "fallow",
+                x = c(0.65, 0.65, 0.65, 0.65),
+                y = c(168, 197, 228.5, 259), 
+                label = c("June", "July", "August", "September"))
+
+
+
+ed_values1 %>% 
+  filter(crop == "fallow") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(crop,  ed) %>% 
+  mutate(location = reorder_within(location, 
+                                   by = estimate, 
+                                   within = ed)) %>% 
+  ggplot(aes(x = location, y = estimate)) +
+  scale_x_reordered() +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 153, ymax= 183), 
+            fill = "#FFFDD0", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 153, size = 1.1, 
+             color = "red",
+             alpha = 1) +
+  geom_point(size = 2) +
+  geom_linerange(aes(ymin = lower, ymax = upper), size = 1.2) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2, color = c("#8B8000", "#80461b", 
+                                  "darkgreen", "blue")) +
+  labs(y = "Day of year", x = NULL,
+       title = NULL) +
+  facet_grid(ed ~ crop, scales = "free_y") +
+  coord_flip() +
+  theme_test() +
+  theme(legend.position = "none",
+        plot.title = element_markdown(),
+        strip.text = element_markdown(face = "bold"),
+        plot.title.position = "plot") -> p1f
+```
+
+
+```{r}
+month <- tibble(ed = "90% flowering",
+                crop = "corn",
+                x = c(0.65, 0.65, 0.65, 0.65),
+                y = c(168, 197, 228.5, 259), 
+                label = c("June", "July", "August", "September"))
+
+
+ed_values1 %>% 
+  filter(crop == "corn") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(crop,  ed) %>% 
+  mutate(location = reorder_within(location, 
+                                   by = estimate, 
+                                   within = ed)) %>% 
+  ggplot(aes(x = location, y = estimate)) +
+  scale_x_reordered() +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 153, ymax= 183), 
+            fill = "#FFFDD0", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 153, size = 1.1, 
+             color = "red",
+             alpha = 1) +
+  geom_point(size = 2) +
+  geom_linerange(aes(ymin = lower, ymax = upper), size = 1.2) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2, color = c("#8B8000", "#80461b", 
+                                  "darkgreen", "blue")) +
+  labs(y = NULL, x = NULL,
+       title = NULL) +
+  facet_grid(ed ~ crop, scales = "free_y") +
+  coord_flip() +
+  theme_test() +
+  theme(legend.position = "none",
+        plot.title = element_markdown(),
+        strip.text = element_markdown(face = "bold"),
+        plot.title.position = "plot") -> p1s
+```
+
+
+```{r}
+library(patchwork)
+f1 <- p1c | p1f | p1s +
+  plot_annotation(
+  title = "DOY of 10, 50, and 90% Palmer amaranth flowering after first transplanting") 
+  ggsave("June.png", width = 9, height = 5, dpi = 600, f1)
+```
+
+
 
 
 
@@ -151,19 +332,203 @@ ed_values1 %>%
 ```{r}
 july <-  data4 %>% 
   filter(month == "July")
-model1 <- drm(prob*100 ~ doyh, trt, fct = W2.3(fixed = c(NA, 100, NA)), data = july)
+model2 <- drm(prob*100 ~ doyh, trt, fct = W2.3(fixed = c(NA, 100, NA)), data = july)
 
-plot(model1, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
+plot(model2, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
      xlab = "Day of the year")
 ```
 
-
 ```{r}
 #broom::tidy(model_arl)
-summary(model1)
+summary(model2)
 ```
 
 ```{r}
-ed_values <- ED(model1, c(10, 50, 90), interval = "delta", type = "absolute")
+ed_values2 <- ED(model2, c(10, 50, 90), interval = "delta", type = "absolute")
+```
+
+```{r}
+ed_values2 %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., var = "name") %>% 
+  as_tibble() %>% 
+  separate(name, c("param", "trt", "ED"), sep = ":") %>% 
+  janitor::clean_names() %>% 
+  separate("trt", c("location", "crop"), sep = "-") %>% 
+  mutate(location = str_to_title(location)) %>% 
+  mutate_if(is_character, as_factor) -> ed_values3
+```
+
+
+```{r}
+label2 <- tibble(ed = "50% flowering", crop = "corn", 
+                   x = 3.5, y = 211, label = "Transplanting \nday")
+rect2 <- tibble(ed = "50% flowering", crop = "corn", 
+               x = 3.5, y = 183, xend = 3.5, yend = 195)
+```
+
+```{r}
+month <- tibble(ed = "90% flowering",
+                crop = "corn",
+                x = c( 0.65, 0.65, 0.65),
+                y = c(197, 228.5, 259), 
+                label = c("July", "August", "September"))
+```
+
+```{r}
+ed_values3 %>% 
+  filter(crop == "corn") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(crop,  ed) %>% 
+  mutate(location = reorder_within(location, 
+                                   by = estimate, 
+                                   within = ed)) %>%
+  ggplot(aes(x = location,
+             y = estimate)) +
+  scale_x_reordered() +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 183, size = 1.1, 
+             color = "red",
+             alpha = 1) +
+  geom_point(size = 2) +
+  geom_linerange(aes(ymin = lower, ymax = upper), size = 1.2) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2.5, color = c("#80461b", "darkgreen", "blue")) +
+  labs(y = NULL, x = NULL) +
+  facet_grid(ed ~ crop, scales = "free_y") +
+  geom_curve(data = rect2, aes(x = x, y = y, 
+                               xend = xend, yend = yend),
+             arrow = arrow(length = unit(0.07, "inch")), 
+               size = 0.4, curvature = 0.3) + 
+  geom_text(data = label2, 
+            aes(x = x, y = y), 
+            size = 2,
+            label = label2$label, color = "red") +
+  coord_flip() +
+  theme_test() +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold"),
+        plot.title = element_markdown(),
+        plot.title.position = "plot") -> p2c
+```
+
+```{r}
+month <- tibble(ed = "90% flowering",
+                crop = "fallow",
+                x = c( 0.65, 0.65, 0.65),
+                y = c(197, 228.5, 259), 
+                label = c("July", "August", "September"))
+```
+
+
+```{r}
+ed_values3 %>% 
+  filter(crop == "fallow") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(crop,  ed) %>% 
+  mutate(location = reorder_within(location, 
+                                   by = estimate, 
+                                   within = ed)) %>%
+  ggplot(aes(x = location,
+             y = estimate)) +
+  scale_x_reordered() +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 183, size = 1.1, 
+             color = "red",
+             alpha = 1) +
+  geom_point(size = 2) +
+  geom_linerange(aes(ymin = lower, ymax = upper), size = 1.2) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2.5, color = c("#80461b", "darkgreen", "blue")) +
+  labs(y = "Day of year", x = NULL) +
+  facet_grid(ed ~ crop, scales = "free_y") +
+  coord_flip() +
+  theme_test() +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold"),
+        plot.title = element_markdown(),
+        plot.title.position = "plot") -> p2f
+```
+
+```{r}
+month <- tibble(ed = "90% flowering",
+                crop = "soybean",
+                x = c( 0.65, 0.65, 0.65),
+                y = c(197, 228.5, 259), 
+                label = c("July", "August", "September"))
+
+
+ed_values3 %>% 
+  filter(crop == "soybean") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(crop,  ed) %>% 
+  mutate(location = reorder_within(location, 
+                                   by = estimate, 
+                                   within = ed)) %>%
+  ggplot(aes(x = location,
+             y = estimate)) +
+  scale_x_reordered() +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 183, size = 1.1, 
+             color = "red",
+             alpha = 1) +
+  geom_point(size = 2) +
+  geom_linerange(aes(ymin = lower, ymax = upper), size = 1.2) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2.5, color = c("#80461b", "darkgreen", "blue")) +
+  labs(y = NULL, x = NULL) +
+  facet_grid(ed ~ crop, scales = "free_y") +
+  coord_flip() +
+  theme_test() +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold"),
+        plot.title = element_markdown(),
+        plot.title.position = "plot") -> p2s
+p2s
+```
+
+
+```{r}
+library(patchwork)
+f3 <- p2c | p2f | p2s +
+  plot_annotation(
+  title = "DOY of 10, 50, and 90% Palmer amaranth flowering after second transplanting") 
+  ggsave("July.png", width = 9, height = 5, dpi = 600, f3)
 ```
 
