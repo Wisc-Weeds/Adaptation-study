@@ -532,3 +532,16 @@ f3 <- p2c | p2f | p2s +
   ggsave("July.png", width = 9, height = 5, dpi = 600, f3)
 ```
 
+
+
+
+
+#### -----
+
+# Biomass
+
+
+```{r}
+data2
+```
+
