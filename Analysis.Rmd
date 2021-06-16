@@ -9,7 +9,7 @@ output: pdf_document
 library(tidyverse)
 library(ggplot2)
 library(lme4)
-library(lmerTest)
+library(lmerTest) 
 library(emmeans)
 library(ggpubr)
 library(bestNormalize)
