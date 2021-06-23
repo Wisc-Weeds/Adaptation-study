@@ -538,10 +538,199 @@ f3 <- p2c | p2f | p2s +
 
 #### -----
 
+```{r}
+library(ggdist)
+library(PupillometryR)
+```
+
 # Biomass
+
+```{r}
+data <- read_csv("data2.csv")
+```
 
 
 ```{r}
-data2
+data %>% 
+  rename(month = planting,
+         planting = planting_1) %>% 
+  mutate(planting = mdy(planting),
+         harvest = mdy(harvest),
+         doyp = yday(planting)) %>% 
+  mutate_if(is_character, as_factor) -> data1
 ```
 
+```{r}
+data1 %>% 
+  mutate(month = fct_recode(month,
+                            "first planting" = "June",
+                            "second planting" = "July")) -> data1
+```
+
+
+
+```{r}
+data1 %>% 
+  mutate(location = str_to_title(location)) %>% 
+  filter(crop == "corn") %>% 
+  filter(!is.na(weight)) %>% 
+  ggplot(aes(x = fct_reorder(location, weight), y = weight,
+             color = location, 
+             fill = location)) + 
+  geom_jitter(position = position_nudge(x = -0.2, y = 0), alpha = 0.1) +
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0.5) +
+  geom_flat_violin(position = position_nudge(x = 0.2, y = 0), 
+                   stat = "ydensity",
+                   alpha = 0.8, scale = "count") +
+  stat_summary(fun = "mean", colour = "red", size = 1, geom = "point") +
+  scale_color_viridis_d(option = "H") + 
+  scale_fill_viridis_d(option = "H") + 
+  theme_test() +
+  facet_grid(month ~ crop, scales = "free") +
+  coord_flip() +
+  labs(x = NULL, y = NULL) +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold")) -> fg1
+```
+
+
+```{r}
+data1 %>% 
+  mutate(location = str_to_title(location)) %>% 
+  filter(crop == "fallow") %>% 
+  filter(!is.na(weight)) %>% 
+  ggplot(aes(x = fct_reorder(location, weight), y = weight,
+             color = location, 
+             fill = location)) + 
+  geom_jitter(position = position_nudge(x = -0.2, y = 0), alpha = 0.1) +
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0.5) +
+  geom_flat_violin(position = position_nudge(x = 0.2, y = 0), 
+                   stat = "ydensity",
+                   alpha = 0.8, scale = "count") +
+  stat_summary(fun = "mean", colour = "red", size = 1, geom = "point") +
+  scale_color_viridis_d(option = "H") + 
+  scale_fill_viridis_d(option = "H") + 
+  theme_test() +
+  facet_grid(month ~ crop, scales = "free") +
+  coord_flip() +
+  labs(x = NULL, y = "Biomass (g)") +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold")) -> fg2
+```
+
+
+```{r}
+data1 %>% 
+  mutate(location = str_to_title(location)) %>% 
+  filter(crop == "soybean") %>% 
+  filter(!is.na(weight)) %>% 
+  ggplot(aes(x = fct_reorder(location, weight), y = weight,
+             color = location, 
+             fill = location)) + 
+  geom_jitter(position = position_nudge(x = -0.2, y = 0), alpha = 0.1) +
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0.5) +
+  geom_flat_violin(position = position_nudge(x = 0.2, y = 0), 
+                   stat = "ydensity",
+                   alpha = 0.8, scale = "count") +
+  stat_summary(fun = "mean", colour = "red", size = 1, geom = "point") +
+  scale_color_viridis_d(option = "H") + 
+  scale_fill_viridis_d(option = "H") + 
+  theme_test() +
+  facet_grid(month ~ crop, scales = "free") +
+  coord_flip() +
+  labs(x = NULL, y = NULL) +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold")) -> fg3
+```
+
+```{r}
+f4 <- fg1 | fg2 | fg3 +
+  plot_annotation(
+  title = NULL) 
+  ggsave("biomass.png", width = 9, height = 5, dpi = 600, f4)
+```
+
+
+# Height
+
+
+```{r}
+data1 %>% 
+  mutate(location = str_to_title(location)) %>% 
+  filter(crop == "corn") %>% 
+  filter(!is.na(height)) %>% 
+  ggplot(aes(x = fct_reorder(location, height), y = height,
+             color = location, 
+             fill = location)) + 
+  geom_jitter(position = position_nudge(x = -0.2, y = 0), alpha = 0.1) +
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0.5) +
+  geom_flat_violin(position = position_nudge(x = 0.2, y = 0), 
+                   stat = "ydensity",
+                   alpha = 0.8, scale = "count") +
+  stat_summary(fun = "mean", colour = "red", size = 1, geom = "point") +
+  scale_color_viridis_d(option = "H") + 
+  scale_fill_viridis_d(option = "H") + 
+  theme_test() +
+  facet_grid(month ~ crop, scales = "free") +
+  coord_flip() +
+  labs(x = NULL, y = NULL) +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold")) -> fg4
+```
+
+
+```{r}
+data1 %>% 
+  mutate(location = str_to_title(location)) %>% 
+  filter(crop == "fallow") %>% 
+  filter(!is.na(height)) %>% 
+  ggplot(aes(x = fct_reorder(location, height), y = height,
+             color = location, 
+             fill = location)) + 
+  geom_jitter(position = position_nudge(x = -0.2, y = 0), alpha = 0.1) +
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0.5) +
+  geom_flat_violin(position = position_nudge(x = 0.2, y = 0), 
+                   stat = "ydensity",
+                   alpha = 0.8, scale = "count") +
+  stat_summary(fun = "mean", colour = "red", size = 1, geom = "point") +
+  scale_color_viridis_d(option = "H") + 
+  scale_fill_viridis_d(option = "H") + 
+  theme_test() +
+  facet_grid(month ~ crop, scales = "free") +
+  coord_flip() +
+  labs(x = NULL, y = "Height (cm)") +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold")) -> fg5
+```
+
+
+```{r}
+data1 %>% 
+  mutate(location = str_to_title(location)) %>% 
+  filter(crop == "soybean") %>% 
+  filter(!is.na(height)) %>% 
+  ggplot(aes(x = fct_reorder(location, height), y = height,
+             color = location, 
+             fill = location)) + 
+  geom_jitter(position = position_nudge(x = -0.2, y = 0), alpha = 0.1) +
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0.5) +
+  geom_flat_violin(position = position_nudge(x = 0.2, y = 0), 
+                   stat = "ydensity",
+                   alpha = 0.8, scale = "count") +
+  stat_summary(fun = "mean", colour = "red", size = 1, geom = "point") +
+  scale_color_viridis_d(option = "H") + 
+  scale_fill_viridis_d(option = "H") + 
+  theme_test() +
+  facet_grid(month ~ crop, scales = "free") +
+  coord_flip() +
+  labs(x = NULL, y = NULL) +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold")) -> fg6
+```
+
+```{r}
+f5 <- fg4 | fg5 | fg6 +
+  plot_annotation(
+  title = NULL) 
+  ggsave("height.png", width = 9, height = 5, dpi = 600, f5)
+```
