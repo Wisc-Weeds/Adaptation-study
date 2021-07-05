@@ -44,7 +44,7 @@ affiliation:
     country: United States
 output: rticles::frontiers_article
 csl: frontiers.csl
-bibliography: test.bib
+bibliography: adaptation.bib
 ---
 
 \begin{abstract}
@@ -61,15 +61,20 @@ and length according to article type.
 
 
 # Introduction {-}
+
 Cite fancy references [@Neuro2013]. As demonstrated in @Gene2012, citations can
 also be automatically reference. Multiple references are separated by semicolons
 [@Neuro2013; @Neurobot2013].
 
 # Material and Methods {-}
 
-## Plant material {-}
+## Plant material and growing conditions {-}
 
-The study was performed with a *A. palmeri* accession (Per1) from Perkins County, Nebraska. Per1 accession collection is documented in [], with no  confirmed herbicide resistance. 
+The study was performed with a *A. palmeri* accession (Per1) from Perkins County, Nebraska. Per1 accession collection is documented in [@oliveira2021a], with no reported herbicide resistance. Seeds were planted in plastic trays containing potting-mix. Emerged seedlings (1 cm) were transplanted into 200 cm<sup>-3</sup> plastic pots (a plant pot<sup>-1</sup>). Palmer amaranth seedlings were supplied with adequate water and kept under greenhouse conditions at Arlington, Clay Center, Lincoln, and Macomb; and kept outdoors in Grant. At 7 to 10 cm height, Palmer amaranth seedlings were transplanted to the field for the onset of the experiment.
+
+## Field study {-}
+
+The experiment was conducted under field conditions at five locations: Arlington, WI (Washington County), Clay Center, NE (Clay County), Grant, NE (Perkins County), Lincoln, NE (Lancaster County), and Macomb, IL (McDonough County)
 
 # Results {-}
 
