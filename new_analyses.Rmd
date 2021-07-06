@@ -165,7 +165,7 @@ ed_values1 %>%
                                    by = estimate, 
                                    within = ed)) %>% 
   ggplot(aes(x = location, y = estimate)) +
-  scale_x_reordered() +
+  scale_x_reordered(expand = c(.01, .01)) +
   geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
                         ymin= 153, ymax= 183), 
             fill = "#FFFDD0", alpha=0.05) +
@@ -196,7 +196,7 @@ ed_values1 %>%
   geom_text(data = label1, 
             aes(x = x, y = y), 
             size = 2,
-            label = label2$label, color = "red") +
+            label = label1$label, color = "red") +
   coord_flip() +
   theme_test() +
   theme(legend.position = "none",
@@ -227,7 +227,7 @@ ed_values1 %>%
                                    by = estimate, 
                                    within = ed)) %>% 
   ggplot(aes(x = location, y = estimate)) +
-  scale_x_reordered() +
+  scale_x_reordered(expand = c(.01, .01)) +
   geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
                         ymin= 153, ymax= 183), 
             fill = "#FFFDD0", alpha=0.05) +
@@ -280,7 +280,7 @@ ed_values1 %>%
                                    by = estimate, 
                                    within = ed)) %>% 
   ggplot(aes(x = location, y = estimate)) +
-  scale_x_reordered() +
+  scale_x_reordered(expand = c(.01, .01)) +
   geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
                         ymin= 153, ymax= 183), 
             fill = "#FFFDD0", alpha=0.05) +
@@ -389,7 +389,7 @@ ed_values3 %>%
                                    within = ed)) %>%
   ggplot(aes(x = location,
              y = estimate)) +
-  scale_x_reordered() +
+  scale_x_reordered(expand = c(.01, .01)) +
   geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
                         ymin= 183, ymax= 214), 
             fill = "#80461b", alpha=0.05) +
@@ -447,7 +447,7 @@ ed_values3 %>%
                                    within = ed)) %>%
   ggplot(aes(x = location,
              y = estimate)) +
-  scale_x_reordered() +
+    scale_x_reordered(expand = c(.01, .01)) +
   geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
                         ymin= 183, ymax= 214), 
             fill = "#80461b", alpha=0.05) +
@@ -495,7 +495,7 @@ ed_values3 %>%
                                    within = ed)) %>%
   ggplot(aes(x = location,
              y = estimate)) +
-  scale_x_reordered() +
+  scale_x_reordered(expand = c(.01, .01)) +
   geom_rect(mapping=aes(xmin= 0.5, xmax= 4.5,
                         ymin= 183, ymax= 214), 
             fill = "#80461b", alpha=0.05) +

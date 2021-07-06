@@ -62,9 +62,7 @@ and length according to article type.
 
 # Introduction {-}
 
-Cite fancy references [@Neuro2013]. As demonstrated in @Gene2012, citations can
-also be automatically reference. Multiple references are separated by semicolons
-[@Neuro2013; @Neurobot2013].
+kgghkg
 
 # Material and Methods {-}
 
@@ -74,7 +72,19 @@ The study was performed with a *A. palmeri* accession (Per1) from Perkins County
 
 ## Field study {-}
 
-The experiment was conducted under field conditions at five locations: Arlington, WI (Washington County), Clay Center, NE (Clay County), Grant, NE (Perkins County), Lincoln, NE (Lancaster County), and Macomb, IL (McDonough County)
+The experiment was conducted under field conditions at five locations: Arlington (Washington County, Wisconsin), Clay Center (Clay County, Nebraska), Grant (Perkins County, Nebraska), Lincoln (Lancaster County, Nebraska), and Macomb (McDonough County, Illinois)
+
+Palmer amaranth flowering was monitored every other day throughout the study. When a plant started flowering, it was identified as male or female. Plant height was measured from soil surface to the plant apical meristem. Then, aboveground plant biomass was harvest near soil surface and oven dried at 65 C until reaching constant weight before the weight of biomass (g plant<sup>-1</sup>) was recorded.
+
+
+## Statistical analyses {-}
+
+The statistical analyses were performed using R statistical software version 4.0.1. 
+
+The cumulative Palmer amaranth flowering estimation was determined using a asymetrical three parameter log logistic Weibull function of the drc package . 
+
+$$Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))$$
+In this model, *Y* is the Palmer amaranth cumulative flowering, *d* is the upper limit (set to 100), and *e* is the XXX, and *x* day of year. 
 
 # Results {-}
 

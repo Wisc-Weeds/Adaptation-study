@@ -208,33 +208,57 @@ and length according to article type.
 \section*{Introduction}\label{introduction}}
 \addcontentsline{toc}{section}{Introduction}
 
-Cite fancy references (\textbf{Neuro2013?}). As demonstrated in
-(\textbf{Gene2012?}), citations can also be automatically reference.
-Multiple references are separated by semicolons (\textbf{Neuro2013?};
-\textbf{Neurobot2013?}).
+kgghkg
 
 \hypertarget{material-and-methods}{%
 \section*{Material and Methods}\label{material-and-methods}}
 \addcontentsline{toc}{section}{Material and Methods}
 
-\hypertarget{plant-material}{%
-\subsection*{Plant material}\label{plant-material}}
-\addcontentsline{toc}{subsection}{Plant material}
+\hypertarget{plant-material-and-growing-conditions}{%
+\subsection*{Plant material and growing
+conditions}\label{plant-material-and-growing-conditions}}
+\addcontentsline{toc}{subsection}{Plant material and growing conditions}
 
 The study was performed with a \emph{A. palmeri} accession (Per1) from
 Perkins County, Nebraska. Per1 accession collection is documented in
 (Oliveira et al., 2021), with no reported herbicide resistance. Seeds
 were planted in plastic trays containing potting-mix. Emerged seedlings
-(1 cm) were transplated into 200 cm-3 plastic pots. Palmer amaranth
-seedlings supplied with adequate water and kept under greenhouse
-conditions at 28/20 C day/night temperature with 80\$ relative humidity.
-Artificial lighting was provided using metal halide lamps (600 mmol m-2
-s-1) to ensure 15-h photoperiod.
+(1 cm) were transplanted into 200 cm-3 plastic pots (a plant pot-1).
+Palmer amaranth seedlings were supplied with adequate water and kept
+under greenhouse conditions at Arlington, Clay Center, Lincoln, and
+Macomb; and kept outdoors in Grant. At 7 to 10 cm height, Palmer
+amaranth seedlings were transplanted to the field for the onset of the
+experiment.
+
+\hypertarget{field-study}{%
+\subsection*{Field study}\label{field-study}}
+\addcontentsline{toc}{subsection}{Field study}
 
 The experiment was conducted under field conditions at five locations:
-Arlington, WI (Washington County), Clay Center, NE (Clay County), Grant,
-NE (Perkins County), Lincoln, NE (Lancaster County), and Macomb, IL
-(McDonough County)
+Arlington (Washington County, Wisconsin), Clay Center (Clay County,
+Nebraska), Grant (Perkins County, Nebraska), Lincoln (Lancaster County,
+Nebraska), and Macomb (McDonough County, Illinois)
+
+Palmer amaranth flowering was monitored every other day throughout the
+study. When a plant started flowering, it was identified as male or
+female. Plant height was measured from soil surface to the plant apical
+meristem. Then, aboveground plant biomass was harvest near soil surface
+and oven dried at 65 C until reaching constant weight before the weight
+of biomass (g plant-1) was recorded.
+
+\hypertarget{statistical-analyses}{%
+\subsection*{Statistical analyses}\label{statistical-analyses}}
+\addcontentsline{toc}{subsection}{Statistical analyses}
+
+The statistical analyses were performed using R statistical software
+version 4.0.1.
+
+The cumulative Palmer amaranth flowering estimation was determined using
+a three parameter log logistic Weibull function of the drc package .
+
+\[Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))\] In this model, \emph{Y} is
+the Palmer amaranth cumulative flowering, \emph{d} is the upper limit
+(set to 100), and \emph{e} is the XXX, and \emph{x} day of year.
 
 \hypertarget{results}{%
 \section*{Results}\label{results}}
