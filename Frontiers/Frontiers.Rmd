@@ -68,23 +68,27 @@ kgghkg
 
 ## Plant material and growing conditions {-}
 
-The study was performed with a *A. palmeri* accession (Per1) from Perkins County, Nebraska. Per1 accession collection is documented in [@oliveira2021a], with no reported herbicide resistance. Seeds were planted in plastic trays containing potting-mix. Emerged seedlings (1 cm) were transplanted into 200 cm<sup>-3</sup> plastic pots (a plant pot<sup>-1</sup>). Palmer amaranth seedlings were supplied with adequate water and kept under greenhouse conditions at Arlington, Clay Center, Lincoln, and Macomb; and kept outdoors in Grant. At 7 to 10 cm height, Palmer amaranth seedlings were transplanted to the field for the onset of the experiment.
+The study was performed with a *A. palmeri* accession (Per1) from Perkins County, Nebraska. Per1 accession collection is documented in [@oliveira2021a], with no reported herbicide resistance. Three weeks prior to the field experiment, seeds were planted in plastic trays containing potting-mix. Emerged seedlings (1 cm) were transplanted into 200 cm<sup>-3</sup> plastic pots (a plant pot<sup>-1</sup>). Palmer amaranth seedlings were supplied with adequate water and kept under greenhouse conditions at Arlington, Clay Center, Lincoln, and Macomb; and kept outdoors in Grant. Palmer amaranth seedlings were kept under greenhouse/outdoors until the onset of the experiment (7 to 10 cm height). 
 
 ## Field study {-}
 
-The experiment was conducted under field conditions at five locations: Arlington (Washington County, Wisconsin), Clay Center (Clay County, Nebraska), Grant (Perkins County, Nebraska), Lincoln (Lancaster County, Nebraska), and Macomb (McDonough County, Illinois)
+The experiment was conducted in 2018 and 2019 under field conditions at five locations: Arlington (Washington County, Wisconsin), Clay Center (Clay County, Nebraska), Grant (Perkins County, Nebraska), Lincoln (Lancaster County, Nebraska), and Macomb (McDonough County, Illinois).
 
-Palmer amaranth flowering was monitored every other day throughout the study. When a plant started flowering, it was identified as male or female. Plant height was measured from soil surface to the plant apical meristem. Then, aboveground plant biomass was harvest near soil surface and oven dried at 65 C until reaching constant weight before the weight of biomass (g plant<sup>-1</sup>) was recorded.
+The experimental unit were adjacent 9.1 m wide (12 rows at 72.2 cm row spacing) by 10.7 m long. Each experimental unit was planted with corn or soybean, or left fallow. Palmer amaranth seedlings were  transplanted to the field experiment by making a whole in the soil (6 cm deep and 8 cm wide); and gently transferring in the ground (potting mix + two seedlings). After a week, if both plants were alive, one was eliminated. There were two transplant timing: early (June 1^st^) and late (July 1^st^). There were 24 Palmer amaranth plants in each crop/fallow and timing, with a total of 144 plants. The study was repeated twice. 
+
+After transplanting, Palmer amaranth flowering was monitored until the end of the study. When a plant started flowering, the day was recorded, plant sex was identified as male or female, and plant height was measured from soil surface to the plant top. Then, aboveground plant biomass was harvest near soil surface and oven dried at 65 C until reaching constant weight before the weight of biomass (g plant^-1^) was recorded. 
 
 
 ## Statistical analyses {-}
 
 The statistical analyses were performed using R statistical software version 4.0.1. 
 
-The cumulative Palmer amaranth flowering estimation was determined using a asymetrical three parameter log logistic Weibull function of the drc package . 
+The cumulative Palmer amaranth flowering estimation was determined using a asymmetrical three parameter log logistic Weibull model of the drc package [@ritz2015]. 
 
 $$Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))$$
-In this model, *Y* is the Palmer amaranth cumulative flowering, *d* is the upper limit (set to 100), and *e* is the XXX, and *x* day of year. 
+In this model, *Y* is the Palmer amaranth cumulative flowering, *d* is the upper limit (set to 100), and *e* is the XXX, and *x* day of year (doy). 
+
+The doy for 10, 50, and 90% Palmer amaranth cumulative flowering were determined using the *ED* function of drc package. Also, the 10, 50, and 90% Palmer amaranth cumulative flowering were compared among crop/fallow and timings using the *EDcomp* function of drc package. The EDcomp function compares the ratio of cumulative flowering using t-statistics, where P-value < 0.05 indicates that we fail to reject the null hypothesis.
 
 # Results {-}
 
@@ -94,12 +98,10 @@ In this model, *Y* is the Palmer amaranth cumulative flowering, *d* is the upper
 
 You can use `R` chunks directly to plot graphs.  
 
-```{r graph, echo = TRUE, message=FALSE, fig.show = "hide"}
-x <- 0:100
-set.seed(999)
-y <- 2 * (x + rnorm(length(x), sd = 3) + 3)
-plot(x, y)
+```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
+knitr::include_graphics("../june.png")
 ```
+
 
 ## Subsection 2 {-}
 
@@ -191,7 +193,11 @@ compiling it again using the traditional LaTeX commands.
 
 # Figures {-}
 
-```{r, Figure-1, ref.label = "graph", results = "hide", echo = FALSE, message = FALSE, fig.height=4, fig.width=4, fig.align='center', fig.cap='Figure caption', out.width = "85mm", out.height = "85mm"}
+
+
+```{r, Figure-2, ref.label = "fig1", echo = FALSE, message = FALSE, fig.height=3, fig.width=5, fig.align='center', fig.cap='Figure caption', out.width = "150mm", out.height = "85mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
+
+
 
