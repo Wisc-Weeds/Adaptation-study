@@ -1,0 +1,174 @@
+---
+title: "weather"
+author: "Maxwel Coura Oliveira"
+date: "7/8/2021"
+output: html_document
+---
+
+```{r}
+library(tidyverse) # Data wrangling
+library(lubridate) # Dates operations
+library(daymetr)
+library(chirps)
+library(nasapower)
+library(vegan)
+```
+
+# Load data
+
+You can load your data with read_csv if you have it in a spreadsheet.
+
+```{r}
+# your data
+df_time <- tibble(ID = c('1','2','3','4','5'), 
+                  Site = c('Arlington','Macomb','Lincoln',
+                               'Clay Center', 'Grant'),
+                  # Both coordinates in decimal format
+                  latitude = c(43.18, 40.45, 40.85, 40.57, 40.8430),
+                  longitude = c(-89.20, -90.67, -96.62, -98.13, -101.72),
+                  Start = c('1988-01-01','1988-01-01','1988-01-01',
+                                '1988-01-01', '1988-01-01'),
+                  Early_planting = c("2018-06-01", "2018-06-01",
+                                     "2018-06-01",
+                                     "2018-06-01", "2018-06-01"),
+                  Late_planting = c("2018-06-01", "2018-06-01", "2018-06-01",
+                                    "2018-06-01", "2018-06-01"),
+                      End = c('2020-12-31','2020-12-31','2020-12-31',
+                              '2020-12-31', '2020-12-31'))
+
+df_time <- df_time %>% 
+  mutate_at(5:8, ymd) # as date
+```
+
+
+## Daymet 
+
+```{r function}
+source("weather_daymet.R")
+```
+
+
+
+```{r get_data}
+#dpp default = 0 - dpp = days prior start date
+
+df_daymet <- weather_daymet(input = df_time, dpp = 0) 
+```
+
+
+```{r}
+df_daymet %>% 
+  janitor::clean_names() %>% 
+  mutate(month_lab = month(date, label = TRUE)) -> adaptation_weather
+```
+
+
+```{r}
+adaptation_weather %>% 
+  filter(month %in% c(6, 7, 8, 9)) %>% 
+  mutate(year = as.character(year),
+         highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
+         variable = if_else(highlight == TRUE, year, "NA")) 
+```
+
+
+ 
+```{r}
+adaptation_weather %>% 
+  filter(month %in% c(6, 7, 8, 9)) %>% 
+  mutate(year = as.character(year),
+         highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
+         variable = if_else(highlight == TRUE, year, "NA")) %>% 
+  ggplot(aes(x = month_lab, y = tmean)) +
+  geom_jitter(aes(color = variable), alpha = 0.05) +
+  scale_color_manual(values = c("red", "blue", "gray90")) +
+  geom_line(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(tmean = mean(tmean)),
+             mapping = aes(x = month_lab, y = tmean, group = 1), 
+             color = "red") +
+  geom_line(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(tmean = mean(tmean)),
+             mapping = aes(x = month_lab, y = tmean, group = 1), 
+             color = "blue") +
+  geom_point(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(tmean = mean(tmean)),
+             mapping = aes(x = month_lab, y = tmean), 
+             fill = "red", shape = 22, size = 3) +
+  geom_point(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(tmean = mean(tmean)),
+             mapping = aes(x = month_lab, y = tmean), 
+             fill = "blue", shape = 22, size = 3) +
+  facet_grid(~ site) +
+  labs(x = NULL, y = "Temperature (C)") +
+  theme_test() +
+  theme(legend.position = "none") -> temp
+
+ggsave("weather.png", height = 3, width = 6)
+```
+
+
+
+
+```{r}
+adaptation_weather %>% 
+  filter(month %in% c(6, 7, 8, 9)) %>% 
+  group_by(month_lab, site, year) %>% 
+  summarise(pp = sum(pp)) %>% 
+  mutate(year = as.character(year),
+         highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
+         variable = if_else(highlight == TRUE, year, "NA")) %>% 
+  ggplot(aes(x = month_lab, y = pp)) +
+  geom_jitter(aes(color = variable), alpha = 0.2) +
+  scale_color_manual(values = c("red", "blue", "gray90")) +
+  geom_line(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp, group = 1), 
+             color = "red") +
+  geom_line(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp, group = 1), 
+             color = "blue") +
+  geom_point(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp), 
+             fill = "red", shape = 21, size = 3) +
+  geom_point(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp), 
+             fill = "blue", shape = 21, size = 3) +
+  facet_grid(~ site) +
+  labs(x = NULL, y = "Precipitation (mm)") +
+  theme_test() +
+  theme(legend.position = "none") -> ppp
+
+ggsave("ppp.png", height = 3, width = 6)
+```
+
+
+```{r}
+library(patchwork)
+```
+
+
+```{r}
+temp / ppp
+
+ggsave("Figure 1.png")
+```
+
