@@ -99,6 +99,11 @@ The doy for 10, 50, and 90% Palmer amaranth cumulative flowering were determined
 You can use `R` chunks directly to plot graphs.  
 
 ```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
+knitr::include_graphics("../weather/Figure 1.png")
+```
+
+
+```{r fig2, echo = FALSE, message=FALSE, fig.show = "hide"}
 knitr::include_graphics("../june.png")
 ```
 
@@ -193,9 +198,11 @@ compiling it again using the traditional LaTeX commands.
 
 # Figures {-}
 
+```{r, Figure-1, ref.label = "fig1", echo = FALSE, message = FALSE, fig.height=3, fig.width=6, fig.align='center', fig.cap='Mean average temperature (C) and montly sum precipitation (mm) at Arlington, WI, Clay Center, NE, Grant, NE, Lincoln, NE and Macomb, IL', out.width = "160mm", out.height = "100mm"}
+# You can also refer to code chunks from above to place figures at the bottom.
+```
 
-
-```{r, Figure-2, ref.label = "fig1", echo = FALSE, message = FALSE, fig.height=3, fig.width=5, fig.align='center', fig.cap='Figure caption', out.width = "150mm", out.height = "85mm"}
+```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=3, fig.width=6, fig.align='center', fig.cap='Figure caption', out.width = "160mm", out.height = "90mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
