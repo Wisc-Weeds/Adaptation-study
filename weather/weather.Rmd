@@ -10,6 +10,8 @@ library(tidyverse) # Data wrangling
 library(lubridate) # Dates operations
 library(daymetr)
 library(chirps)
+library(patchwork)
+library(ggtext)
 library(nasapower)
 library(vegan)
 ```
@@ -71,6 +73,10 @@ adaptation_weather %>%
          variable = if_else(highlight == TRUE, year, "NA")) 
 ```
 
+```{r}
+text1 <- tibble(site = "Arlington")
+text2 <- tibble(site = "Clay Center")
+```
 
  
 ```{r}
@@ -80,7 +86,7 @@ adaptation_weather %>%
          highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
          variable = if_else(highlight == TRUE, year, "NA")) %>% 
   ggplot(aes(x = month_lab, y = tmean)) +
-  geom_jitter(aes(color = variable), alpha = 0.05) +
+  geom_jitter(aes(color = variable), alpha = 0.05, shape = 0) +
   scale_color_manual(values = c("red", "blue", "gray90")) +
   geom_line(adaptation_weather %>% 
                filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
@@ -106,6 +112,17 @@ adaptation_weather %>%
                summarise(tmean = mean(tmean)),
              mapping = aes(x = month_lab, y = tmean), 
              fill = "blue", shape = 22, size = 3) +
+  geom_richtext(data = text1, aes(x = 2, y = 7), 
+            label = "Mean air temperature <br>in <b style='color:red;'>2018</b> and <b style='color:blue;'>2019</b>", size = 2, 
+            label.color = NA, fill = NA) +
+  geom_richtext(data = text2, aes(x = 2.2, y = 10), 
+            label = "30 years <br>daily mean <br>air temperature", size = 2, 
+             label.color = NA, fill = NA, color = "gray90") +
+  geom_curve(data = text2, 
+             x = 2, y = 13, 
+             xend = 2.5, yend = 16,
+             arrow = arrow(length = unit(0.07, "inch")), 
+             size = 0.4, curvature = -0.3, color = "gray90") + 
   facet_grid(~ site) +
   labs(x = NULL, y = "Temperature (C)") +
   theme_test() +
@@ -114,7 +131,10 @@ adaptation_weather %>%
 ggsave("weather.png", height = 3, width = 6)
 ```
 
-
+```{r}
+text3 <- tibble(site = "Grant")
+text4 <- tibble(site = "Lincoln")
+```
 
 
 ```{r}
@@ -152,6 +172,17 @@ adaptation_weather %>%
                summarise(pp = sum(pp)),
              mapping = aes(x = month_lab, y = pp), 
              fill = "blue", shape = 21, size = 3) +
+  geom_richtext(data = text3, aes(x = 2.6, y = 330), 
+            label = "Monthly sum precipitation <br>in <b style='color:red;'>2018</b> and <b style='color:blue;'>2019</b>", size = 2, 
+            label.color = NA, fill = NA) +
+  geom_richtext(data = text4, aes(x = 3.6, y = 320), 
+            label = "30 years <br>monthly sum <br>precipitation", size = 2, 
+             label.color = NA, fill = NA, color = "gray90") +
+  geom_curve(data = text4, 
+             x = 2.6, y = 310, 
+             xend = 2, yend = 320,
+             arrow = arrow(length = unit(0.07, "inch")), 
+             size = 0.4, curvature = -0.3, color = "gray90") + 
   facet_grid(~ site) +
   labs(x = NULL, y = "Precipitation (mm)") +
   theme_test() +
@@ -161,9 +192,6 @@ ggsave("ppp.png", height = 3, width = 6)
 ```
 
 
-```{r}
-library(patchwork)
-```
 
 
 ```{r}
