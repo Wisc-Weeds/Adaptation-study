@@ -1147,7 +1147,7 @@ ggsave("second.png", width = 3)
 ```{r}
 first | second
 
-ggsave("biomass.png", width = 6)
+ggsave("figures/biomass.png", width = 6)
 ```
 
 
