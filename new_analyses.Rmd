@@ -1175,14 +1175,14 @@ ggsave("figures/biomass.png", width = 6)
 
 ```{r}
 biom %>%
-  unite("crop_yr", c("crop", "year"), sep = "-") %>% 
+#  unite("crop_yr", c("crop", "year"), sep = "-") %>% 
   filter(!is.na(weight)) %>% 
-  group_by(month) %>% 
-  nest(-month) %>% 
-  mutate(model = map(data, ~ lmer(log(biomass) ~ crop_yr + 
+  group_by(year) %>% 
+  nest(-year) %>% 
+  mutate(model = map(data, ~ lmer(log(biomass) ~ location * crop * month + 
                                  (1|location), data = .x)),
          anova = map(model, anova),
-         emmeans = map(model, ~ emmeans(., ~ crop_yr, 
+         emmeans = map(model, ~ emmeans(., ~ location * crop * month, 
                                         type = "response"))) -> analysis2
 ```
 
@@ -1195,11 +1195,11 @@ analysis2$anova[[2]]
 ```{r}
 analysis2$emmeans[[2]] %>% 
   as_tibble() %>% 
-  mutate(month = "Second transplanting") -> second2
+  mutate(year = "2019") -> second2
 
 analysis2$emmeans[[1]] %>% 
   as_tibble() %>% 
-  mutate(month = "First transplanting") %>% 
+  mutate(year = "2018") %>% 
   bind_rows(second2) -> result2
 ```
 
