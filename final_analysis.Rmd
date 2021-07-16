@@ -1,0 +1,414 @@
+---
+title: "final_analysis"
+author: "Maxwel Coura Oliveira"
+date: "7/16/2021"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(drc)
+library(broom)
+library(tidytext)
+library(ggthemes)
+library(ggtext)
+library(patchwork)
+library(extrafont)
+library(showtext)
+showtext_auto()
+font_add_google("Roboto", "roboto") 
+```
+
+```{r}
+data <- read_csv("data2.csv")
+```
+
+###--------------------------
+
+```{r}
+data %>% 
+  filter(location != "grant") %>% 
+  mutate(location = str_replace(location, "havelock", "lincon"))-> data1
+```
+
+```{r}
+data1 %>% 
+  rename(month = planting,
+         planting = planting_1) %>% 
+  mutate(planting = mdy(planting),
+         harvest = mdy(harvest),
+         doyp = yday(planting)) %>% 
+  mutate_if(is_character, as_factor) -> data2
+```
+
+
+```{r}
+data2 %>% 
+  mutate(harvest = as.character(harvest)) %>% 
+  mutate(harvest = str_replace(harvest, "2018", "2019"),
+         harvest = ymd(harvest)) %>% 
+  filter(!is.na(harvest)) %>% 
+  dplyr::select(location, month, crop, harvest) %>% 
+  group_by(month, crop) %>% 
+  count(harvest, name = "harvest_day") -> harvest
+```
+
+
+```{r}
+data2 %>% 
+  filter(!is.na(harvest)) %>% 
+  dplyr::select(location, month, crop, harvest) %>% 
+  group_by(month, crop) %>% 
+  count(month, crop, name = "total") -> total
+```
+
+```{r}
+total %>% 
+  left_join(harvest) %>% 
+  mutate(prop = harvest_day / total) %>% 
+  mutate(lag = lag(prop)) %>% 
+  mutate(prob = cumsum(prop)) %>% 
+  mutate(doyh = yday(harvest)) -> cum_sum
+```
+
+
+
+```{r}
+data2 %>% 
+  mutate(harvest = str_replace(harvest, "2018", "2019"),
+         harvest = ymd(harvest)) %>% 
+  filter(!is.na(harvest)) %>% 
+  ungroup() %>% 
+  left_join(cum_sum) %>% 
+  rename(harvest_com = harvest) %>% 
+  dplyr::select(-lag) -> data3
+```
+
+# June
+
+```{r}
+data3 %>% 
+  filter(month == "June") -> month_jun 
+model3 <- drm(prob*100 ~ doyh, crop, fct = W1.3(), data = month_jun)
+
+plot(model3, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
+     xlab = "Day of the year")
+```
+
+
+```{r}
+#broom::tidy(model_arl)
+summary(model3)
+```
+
+```{r}
+ed_values3 <- ED(model3, c(10, 50, 90), interval = "delta", type = "absolute")
+```
+
+```{r}
+ed_values3 %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., var = "name") %>% 
+  as_tibble() %>% 
+  separate(name, c("param", "crop", "ED"), sep = ":") %>% 
+  janitor::clean_names() %>% 
+  mutate_if(is_character, as_factor) -> ed_values3
+```
+
+
+```{r}
+label1 <- tibble(ed = "90% flowering", 
+                   x = 2.5, y = 185, label = "Transplanting \nday")
+rect1 <- tibble(ed = "90% flowering", 
+               x = 2.5, y = 153, xend = 2.5, yend = 165)
+```
+
+
+```{r}
+month <- tibble(ed = "90% flowering",
+                x = c(0.65, 0.65, 0.65, 0.65),
+                y = c(168, 197, 228.5, 259), 
+                label = c("June", "July", "August", "September"))
+```
+
+
+```{r}
+ed_values3 %>% 
+  mutate(month = "First transplanting") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(month,  ed) %>% 
+  mutate(crop = reorder_within(crop, 
+                                   by = estimate, 
+                                   within = ed)) %>% 
+  ggplot(aes(x = crop, y = estimate)) +
+  scale_x_reordered(expand = c(.01, .01)) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 153, ymax= 183), 
+            fill = "#FFFDD0", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 153, size = 1.1, 
+             color = "#CCCC00",
+             alpha = 1) +
+  geom_point(size = 2, aes(color = crop, 
+                           shape = crop)) +
+  geom_linerange(aes(ymin = lower, ymax = upper, color = crop, 
+                     shape = crop), size = 1.3) +
+  scale_color_manual(values = c("#412234","#EE4B2B","#32CD32",
+                                "#412234","#EE4B2B","#32CD32",
+                                "#412234","#EE4B2B","#32CD32")) +
+  scale_shape_manual(values = c(15,16,17,15,16,17,15,16,17)) +
+  facet_grid(ed ~ month, scales = "free_y") +
+  coord_flip() +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2, color = c("#8B8000", "#80461b", 
+                                  "darkgreen", "blue")) +
+  labs(y = NULL, x = NULL,
+       title = NULL) +
+  geom_curve(data = rect1, aes(x = x, y = y, 
+                               xend = xend, yend = yend),
+             arrow = arrow(length = unit(0.07, "inch")), 
+               size = 0.4, curvature = 0.3) + 
+  geom_text(data = label1, 
+            aes(x = x, y = y), 
+            size = 2,
+            label = label1$label, color = "#CCCC00") +
+  coord_flip() +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none",
+        plot.title = element_markdown(),
+        strip.text = element_markdown(face = "bold"),
+        plot.title.position = "plot") -> p1c
+p1c
+```
+
+
+
+# July
+
+```{r}
+data3 %>% 
+  filter(month == "July") -> month_jul 
+model4 <- drm(prob*100 ~ doyh, crop, fct = W1.3(), data = month_jul)
+
+plot(model4, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)",
+     xlab = "Day of the year")
+```
+
+
+```{r}
+#broom::tidy(model_arl)
+summary(model4)
+```
+
+```{r}
+ed_values4 <- ED(model4, c(10, 50, 90), interval = "delta", type = "absolute")
+```
+
+```{r}
+ed_values4 %>% 
+  as.data.frame() %>% 
+  rownames_to_column(., var = "name") %>% 
+  as_tibble() %>% 
+  separate(name, c("param", "crop", "ED"), sep = ":") %>% 
+  janitor::clean_names() %>% 
+  mutate_if(is_character, as_factor) -> ed_values4
+```
+
+
+```{r}
+label2 <- tibble(ed = "90% flowering", 
+                   x = 2.5, y = 211, label = "Transplanting \nday")
+rect2 <- tibble(ed = "90% flowering",  
+               x = 2.5, y = 183, xend = 2.5, yend = 195)
+```
+
+```{r}
+month1 <- tibble(ed = "90% flowering",
+                x = c(0.65, 0.65, 0.65),
+                y = c(197, 228.5, 259), 
+                label = c("July", "August", "September"))
+```
+
+
+```{r}
+ed_values4 %>% 
+  mutate(month = "Second transplanting") %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  group_by(month,  ed) %>% 
+  mutate(crop = reorder_within(crop, 
+                                   by = estimate, 
+                                   within = ed)) %>% 
+  ggplot(aes(x = crop, y = estimate)) +
+  scale_x_reordered(expand = c(.01, .01)) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 183, ymax= 214), 
+            fill = "#80461b", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 214, ymax= 244), 
+            fill = "lightgreen", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.5, xmax= 3.5,
+                        ymin= 244, ymax= 274), 
+            fill = "blue", alpha=0.05) +
+  geom_hline(yintercept = 183, size = 1.1, 
+             color = "#D2691E",
+             alpha = 1) +
+  geom_point(size = 2, aes(color = crop, shape = crop)) +
+  geom_linerange(aes(ymin = lower, ymax = upper, color = crop), size = 1.3) +
+  scale_color_manual(values = c("#412234","#EE4B2B","#32CD32",
+                                "#412234","#EE4B2B","#32CD32",
+                                "#412234","#32CD32","#EE4B2B")) +
+  scale_shape_manual(values = c(15,16,17,15,16,17,15,17,16)) +
+  geom_text(data = month1, aes(x = x, y = y), label = month1$label,
+            size = 2, color = c("#80461b", "darkgreen", "blue")) +
+  labs(y = NULL, x = NULL) +
+  facet_grid(ed ~ month, scales = "free_y") +
+  geom_curve(data = rect2, aes(x = x, y = y, 
+                               xend = xend, yend = yend),
+             arrow = arrow(length = unit(0.07, "inch")), 
+               size = 0.4, curvature = 0.3) + 
+  geom_text(data = label2, 
+            aes(x = x, y = y), 
+            size = 2,
+            label = label2$label, color = "#D2691E") +
+  coord_flip() +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold"),
+        plot.title = element_markdown(),
+        plot.title.position = "plot") -> p2c
+```
+
+
+```{r}
+library(patchwork)
+f3 <- p1c | p2c +
+  plot_annotation(
+  title = "DOY of 10, 50, and 90% Palmer amaranth flowering") 
+  ggsave("figures/Combined.png", width = 6, height = 5, dpi = 600, f3)
+```
+
+
+###------------
+
+
+```{r}
+library(lme4)
+library(lmerTest)
+library(emmeans)
+```
+```{r}
+data1 %>% 
+  rename(month = planting) %>% 
+  mutate(month = fct_recode(month,
+                            "First transplanting" = "June",
+                            "Second transplanting" = "July")) -> data1
+```
+
+
+```{r}
+data1 %>% 
+  filter(!is.na(weight)) %>% 
+  group_by(year, location, month, crop) %>% 
+  mutate(n = n()) %>% 
+  mutate(biomass = weight / n) -> biom
+```
+
+
+```{r}
+biom %>%
+  group_by(month) %>% 
+  nest(-month) %>% 
+  mutate(model = map(data, ~ lmer(log(biomass) ~ crop + 
+                                 (1|year/location), data = .x)),
+         anova = map(model, anova),
+         emmeans = map(model, ~ emmeans(., ~ crop, 
+                                        type = "response"))) -> analysis
+```
+
+
+
+```{r}
+#anova
+analysis$anova[[2]]
+```
+
+
+
+```{r}
+analysis$emmeans[[2]] %>% 
+  as_tibble() %>% 
+  mutate(month = "Second transplanting") -> second
+
+analysis$emmeans[[1]] %>% 
+  as_tibble() %>% 
+  mutate(month = "First transplanting") %>% 
+  bind_rows(second) -> result
+```
+
+
+
+```{r}
+result %>% 
+  filter(month == "First transplanting") %>% 
+  ggplot(aes(x = fct_reorder(crop, response), y = response,
+             color = crop)) +
+  geom_point(size = 2) +
+  geom_jitter(data = biom %>% 
+                rename(response = biomass) %>% 
+                filter(month == "First transplanting"), 
+              alpha = 0.04, width = 0.3) +
+  geom_linerange(aes(ymin = lower.CL, ymax = upper.CL)) +
+#  scale_color_manual(values = c(1,2,4,3,5, 1,3,2,4,5, 1,2,4,3,5)) +
+  facet_grid(~ month, scales = "free") +
+  coord_flip() +
+
+  labs(y = expression(paste("Biomass (g plant "^"-1",")")), x = NULL) +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none") -> first
+
+ggsave("figures/first.png", width = 4, height = 4)
+```
+
+
+
+```{r}
+result %>% 
+  filter(month == "Second transplanting") %>% 
+  ggplot(aes(x = fct_reorder(crop, response), y = response,
+             color = crop)) +
+  geom_point(size = 2) +
+  geom_jitter(data = biom %>% 
+                rename(response = biomass) %>% 
+                filter(month == "Second transplanting"), 
+              alpha = 0.04, width = 0.3) +
+  geom_linerange(aes(ymin = lower.CL, ymax = upper.CL)) +
+#  scale_color_manual(values = c(1,2,4,3,5, 1,3,2,4,5, 1,2,4,3,5)) +
+  facet_grid(~ month, scales = "free") +
+  coord_flip() +
+  ylim(0, 1000) +
+  labs(y = expression(paste("Biomass (g plant "^"-1",")")), x = NULL) +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none") -> first
+
+ggsave("figures/second.png", width = 4, height = 4)
+```
+
+
