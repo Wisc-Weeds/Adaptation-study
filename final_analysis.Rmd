@@ -344,10 +344,18 @@ biom %>%
 ```
 
 
-
 ```{r}
 #anova
 analysis$anova[[2]]
+```
+
+
+```{r}
+model1 = lmer(log(weight) ~ crop * month + 
+                                 (1|location/year), data = biom)
+anova(model1)
+emmeans(model1, ~ crop * month, type = "response") %>% 
+  as_tibble() -> result
 ```
 
 
@@ -428,11 +436,17 @@ analysis1$emmeans[[1]] %>%
   bind_rows(second1) -> result1
 ```
 
-  scale_color_manual(values = c(1,2)) +
-  scale_shape_manual(values = c(1,2,3)) +
+```{r}
+model2 = lmer(log(height) ~ crop * month + 
+                                 (1|location/year), data = biom)
+anova(model2)
+emmeans(model2, ~ crop * month, type = "response") %>% 
+  as_tibble() -> result2
+```
+
 
 ```{r}
-result1 %>% 
+result2 %>% 
   ggplot(aes(x = fct_reorder(crop, response), 
              y = response,
              color = month)) +
@@ -448,12 +462,12 @@ result1 %>%
   scale_color_manual(values = c(1,2),
                       guide = guide_legend(direction = "vertical",
                                            reverse = TRUE)) +
-#  scale_y_continuous(expand = c(0.05, 1)) +
+  scale_y_continuous(limits = c(0,110), breaks = c(0,25,50,75,100)) +
   coord_flip() +
-  labs(y = expression(paste("Biomass (g plant "^"-1",")")), 
+  labs(y = expression(paste("Height (cm plant "^"-1",")")), 
        x = NULL, color = NULL) +
   theme_test(base_family = "roboto") +
-  theme(legend.position = c(0.75, 0.1))
+  theme(legend.position = c("none"))
   
 
 ggsave("figures/height.png", width = 4, height = 4)

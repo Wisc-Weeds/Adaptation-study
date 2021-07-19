@@ -1046,6 +1046,8 @@ data1 %>%
                             "First transplanting" = "June",
                             "Second transplanting" = "July")) -> data1
 ```
+
+
 ```{r}
 data1 %>% 
   filter(!is.na(weight)) %>% 
@@ -1053,6 +1055,7 @@ data1 %>%
   mutate(n = n()) %>% 
   mutate(biomass = weight / n) -> biom
 ```
+
 ```{r}
 biom %>% 
   ggplot(aes(x = log(biomass))) + 
