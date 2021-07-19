@@ -600,8 +600,8 @@ ggsave("figures/figure 3.png")
 
 
 ```{r}
-wrap_elements(full = curve1) / figure / (figA | figB)
-   plot_layout(heights = c(2, 1, 1.5))
+wrap_elements(full = curve1) / (figure) / (figA | figB) +
+   plot_layout(heights = c(1.5, 1.25, 1.25))
 
 ggsave("figures/combine 3.png", height = 9)
 ```
