@@ -472,7 +472,7 @@ result %>%
              x = response,
              color = month)) +
   geom_point(size = 2,
-             position = position_dodgev(height = 0.4)) +
+             position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
   geom_text(aes(x = 100, y = 1.7), 
             size = 3, hjust = 0,
@@ -495,11 +495,11 @@ result %>%
 #                filter(month == "First transplanting"), 
 #              alpha = 0.04, 
 #              position = position_dodge2(width = 0.5)) +
-  geom_pointrangeh(aes(xmin = lower.CL, xmax = upper.CL),
-                 position = position_dodgev(height = 0.4)) +
-  scale_color_manual(values = c(1,2),
+  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_color_manual(values = c(2,1),
                       guide = guide_legend(direction = "vertical",
-                                           reverse = TRUE)) +
+                                           reverse = FALSE)) +
 #  coord_flip() +
 #  scale_y_continuous(expand = c(0.05, 1)) +
   labs(x = expression(paste("Biomass (g plant "^"-1",")")), 
@@ -565,23 +565,23 @@ result2 %>%
              x = response,
              color = month)) +
   geom_point(size = 2,
-             position = position_dodgev(height = 0.4)) +
+             position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
 #  geom_jitter(data = biom %>% 
 #                rename(response = weight) %>% 
 #                filter(month == "First transplanting"), 
 #              alpha = 0.04, 
 #              position = position_dodge2(width = 0.5)) +
-  geom_pointrangeh(aes(xmin = lower.CL, xmax = upper.CL),
-                 position = position_dodgev(height = 0.4)) +
-  scale_color_manual(values = c(1,2),
+  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_color_manual(values = c(2,1),
                       guide = guide_legend(direction = "vertical",
                                            reverse = TRUE)) +
   scale_x_continuous(limits = c(0,110), breaks = c(0,25,50,75,100)) +
   labs(x = expression(paste("Height (cm plant "^"-1",")")), 
        y = NULL, color = NULL) +
   theme_test(base_family = "roboto") +
-  theme(legend.position = c("none"),
+  theme(legend.position = "none",
         axis.text.y = element_markdown()) -> figB
   
 
