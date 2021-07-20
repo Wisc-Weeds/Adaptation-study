@@ -22,7 +22,7 @@ font_add_google("Roboto", "roboto")
 ```
 
 ```{r}
-data <- read_csv("data2.csv")
+data <- read_csv("../data/data2.csv")
 ```
 
 ###--------------------------
@@ -30,8 +30,14 @@ data <- read_csv("data2.csv")
 ```{r}
 data %>% 
   filter(location != "grant") %>% 
-  mutate(location = str_replace(location, "havelock", "lincon"))-> data1
+  mutate(location = str_replace(location, "havelock", "lincoln")) %>% 
+  mutate(harvest = case_when(
+    location == "clay center" & doyh == 169 ~ "8/18/2018",
+    TRUE ~ harvest
+  )) -> data1
 ```
+
+
 
 ```{r}
 data1 %>% 
@@ -39,7 +45,8 @@ data1 %>%
          planting = planting_1) %>% 
   mutate(planting = mdy(planting),
          harvest = mdy(harvest),
-         doyp = yday(planting)) %>% 
+         doyp = yday(planting),
+         doyh = yday(harvest)) %>% 
   mutate_if(is_character, as_factor) -> data2
 ```
 
@@ -97,10 +104,7 @@ plot(model3, col = c(1,2,3), type = "average", ylab = "Cumulative flowering (%)"
      xlab = "Day of the year")
 ```
 
-```{r}
-month_jun %>% 
-  summarise(max(doyh), min(doyh))
-```
+
 
 
 
@@ -178,6 +182,13 @@ ed_values3 %>%
 
 
 # July
+  summarise(min(doyh))
+```{r}
+month_jul %>% 
+  filter(doyh < 183)
+
+```
+
 
 ```{r}
 data3 %>% 
@@ -193,7 +204,7 @@ month_jul %>%
 ```
 
 ```{r include=FALSE}
-newdata <- expand.grid(doyh = exp(seq(log(175), log(270), length=270)))
+newdata <- expand.grid(doyh = exp(seq(log(183), log(270), length=270)))
 
 newdata1 <- data.frame(crop = "corn", newdata)
 newdata2 <- data.frame(crop = "soybean", newdata)
@@ -219,12 +230,12 @@ ggplot(month_jul,
                            ymax = pmax, fill=crop), 
               color = NA, alpha = 0.1) +
   coord_trans(x="log") +
-  scale_x_continuous(limits = c(175, 270)) +
+  scale_x_continuous(limits = c(150, 270)) +
   scale_y_continuous(limits = c(0, 100), breaks = c(0,25,50,75,100)) +
   labs(x = "Day of year", y = "% cumulative flowering",
        title = NULL) +
   theme_test(base_family = "roboto") +
-  annotate("text", x = 195, y = 99, fontface = "bold",
+  annotate("text", x = 170, y = 99, fontface = "bold",
            family = "roboto", alpha = 1, size = 3,
            label = "Second transplanting", color = 2) +
   scale_color_manual(name = "", values = c("#568EA3", "#84DCC6", "#F79F79"),

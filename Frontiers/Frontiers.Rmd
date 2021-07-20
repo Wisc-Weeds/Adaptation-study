@@ -1,5 +1,5 @@
 ---
-title: "Adaptation of Palmer amaranth to the upper Midwest"
+title: "Adaptation of Palmer amaranth to croppins systems"
 runtitle: "Short Title"
 documentclass: frontiersSCNS  # or frontiersHLTH, or frontiersFPHY
 author:
@@ -62,7 +62,26 @@ and length according to article type.
 
 # Introduction {-}
 
-kgghkg
+Palmer amaranth (*Amaranthus palmeri* S. Watson) is an annual forb native to southwestern United States and northern Mexico. The species is a fast growing C4 species, XXX reported that Palmer amaranth can grow a inch per day. Palmer amaranth reproduce by dioecious plants outcrossing, a single plant can produce up to a million seeds.. Palmer amaranth as well as other Amaranthaceae species have been reported as an edible plant but it has become a concern to agriculture. The species is currently considered one of the most problematic weed species to US cropping systems. 
+
+
+
+
+ family. It is a dioecious species that can reach up to 3 m tall and produce a million seed per plant.
+
+The species biology in combination to human intervention in agriculture made Palmer amaranth one of the most difficult species to control in the United States. Weed control in US agriculture is heavily based on herbicides. Palmer amaranth has showed a remarkable capacity to evolve resistance to herbicides. Thus far, Palmer amaranth has evolved resistance to X herbicide sites of action, which increases control complexity. Palmer amaranth is widespread to southern United States and it is currently moving to northern states. The increase movement of Palmer amaranth to US Midwest warrants investigation on species adaptation to that environment. Most studies are based on reactive but not in the proactive management.
+
+
+The Palmer amaranth biology combined to human intervention in agriculture 
+
+ Palmer amaranth troublesomeness 
+
+
+
+
+The objective of this study was to investigate the flowering pattern, biomass, and height of Palmer amaranth growing under different environments and timing across five locations in the US Midwest. 
+
+
 
 # Material and Methods {-}
 
@@ -99,12 +118,12 @@ The doy for 10, 50, and 90% Palmer amaranth cumulative flowering were determined
 You can use `R` chunks directly to plot graphs.  
 
 ```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
-knitr::include_graphics("../weather/Figure 1.png")
+knitr::include_graphics("../data analysis/weather/Figure 1.png")
 ```
 
 
 ```{r fig2, echo = FALSE, message=FALSE, fig.show = "hide"}
-knitr::include_graphics("../june.png")
+knitr::include_graphics("../data analysis/figures/combine 3.png")
 ```
 
 
@@ -202,7 +221,7 @@ compiling it again using the traditional LaTeX commands.
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
-```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=3, fig.width=6, fig.align='center', fig.cap='Figure caption', out.width = "160mm", out.height = "90mm"}
+```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Figure caption', out.width = "150mm", out.height = "260mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
