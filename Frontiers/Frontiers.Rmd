@@ -1,5 +1,5 @@
 ---
-title: "Adaptation of Palmer amaranth to croppins systems"
+title: "Adaptation of Palmer amaranth to cropping systems"
 runtitle: "Short Title"
 documentclass: frontiersSCNS  # or frontiersHLTH, or frontiersFPHY
 author:
@@ -62,24 +62,18 @@ and length according to article type.
 
 # Introduction {-}
 
-Palmer amaranth (*Amaranthus palmeri* S. Watson) is an annual forb native to southwestern United States and northern Mexico. The species is a fast growing C4 species, XXX reported that Palmer amaranth can grow a inch per day. Palmer amaranth reproduce by dioecious plants outcrossing, a single plant can produce up to a million seeds.. Palmer amaranth as well as other Amaranthaceae species have been reported as an edible plant but it has become a concern to agriculture. The species is currently considered one of the most problematic weed species to US cropping systems. 
+Palmer amaranth (*Amaranthus palmeri* S. Watson) is currently considered one of the most economically damaged weed species to cropping systems in the United States [@ward2013]. The species has showed a remarkable capacity to evolve resistance to herbicides. Thus far, Palmer amaranth has evolved resistance to eight herbicide sites of action, increasing the weed management complexity [@lindsay2017]. Uncontrolled Palmer amaranth in competition for water, light and nutrients can drastically reduce crop yields [@berger2015]. Although currently considered a problematic weed, Palmer amaranth would emerged as a threat to sustainable agriculture only in the 1990s. 
+
+Palmer amaranth is a fast growing summer annual forb indigenous to northern Mexico and southern US [@sauer1957], Palmer amaranth weediness is likely a result of human intervention in combination with species biology. Use and movement of farm equipment across locations, conservation agriculture, and reliance on herbicides for weed management are the main human driver selection of Palmer amaranth to cropping systems. On the other hand, Palmer amaranth is a prolific seed producer with a C4 photosynthetic apparatus. With a dioecy nature, Palmer amaranth male and female plants are obligate outcrosser species, increasing the chances of exchanging herbicide resistant alleles among plants. Also, Palmer amaranth small seed size tend to thrive in no-tillage systems [@price2011], and spread across locations through farm equipment [@sauer1972], manure[@yuundefined/ed], and animals [@farmer2017]. These combinations make Palmer amaranth one of the most successful cases of weed adaption to cropping systems. 
+
+Palmer amaranth is commonly found at crop [@garetson2019] and non-crop land [@bagavathiannan2016] in the southern United States, and its range is expanding northward. For example, herbicide resistant Palmer amaranth is widespread in Nebraska  [@oliveira2021a] and Michigan [@kohrt2017]. Successful cases of Palmer eradication is documented in Minnesota [@yuundefined/ed] and Iowa. Palmer amaranth was also found in Argentina [@larran2017], Brazil [@kupper2017], and Italy [@milani2021]. Climate change can increase Palmer amaranth invasion to Australia and Sub-Sahara Africa [@kistner2018].  Palmer amaranth can survive under continuous water stress and produce a significant amount of seeds @chahal2018]. Produced seeds from Palmer amaranth growing under drier conditions are less dormant and prompt for germination [@matzrafi2021]. Therefore, Palmer amaranth has showed a plasticity to adapt and potential to invade new environments. 
+
+talk about the ecological approach
+
+The increase movement of Palmer amaranth to US Midwest warrants investigation on species adaptation to that environment. Most studies are based on reactive but not in the proactive management.
 
 
-
-
- family. It is a dioecious species that can reach up to 3 m tall and produce a million seed per plant.
-
-The species biology in combination to human intervention in agriculture made Palmer amaranth one of the most difficult species to control in the United States. Weed control in US agriculture is heavily based on herbicides. Palmer amaranth has showed a remarkable capacity to evolve resistance to herbicides. Thus far, Palmer amaranth has evolved resistance to X herbicide sites of action, which increases control complexity. Palmer amaranth is widespread to southern United States and it is currently moving to northern states. The increase movement of Palmer amaranth to US Midwest warrants investigation on species adaptation to that environment. Most studies are based on reactive but not in the proactive management.
-
-
-The Palmer amaranth biology combined to human intervention in agriculture 
-
- Palmer amaranth troublesomeness 
-
-
-
-
-The objective of this study was to investigate the flowering pattern, biomass, and height of Palmer amaranth growing under different environments and timing across five locations in the US Midwest. 
+Understanding Palmer amaranth biology can enhance our knowledge on species adaptation to new environments and aid on design proactive and ecological weed management strategies. Therefore, the objective of this study was to investigate the flowering pattern, biomass, and height of Palmer amaranth growing under different environments and timings across five locations. 
 
 
 
@@ -170,6 +164,8 @@ commercial or financial relationships that could be construed as a potential
 conflict of interest.
 
 # Author Contributions {-}
+
+MCO design, wrote, 
 
 <!--  
 
