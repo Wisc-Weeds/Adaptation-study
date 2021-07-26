@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.6.22)  26 JUL 2021 10:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.6.22)  26 JUL 2021 14:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -560,7 +560,7 @@ Package microtype Info: No adjustment of character kerning.
 File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 )
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 1
-54.
+55.
 (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
 )
@@ -571,30 +571,32 @@ Package microtype Info: Loading generic protrusion settings for font family
 <./logo1.pdf, id=64, 284.06125pt x 80.3pt>
 File: ./logo1.pdf Graphic file (type pdf)
 <use ./logo1.pdf>
-Package pdftex.def Info: ./logo1.pdf  used on input line 154.
+Package pdftex.def Info: ./logo1.pdf  used on input line 155.
 (pdftex.def)             Requested size: 144.0pt x 40.70862pt.
 
-Underfull \hbox (badness 10000) detected at line 154
+Underfull \hbox (badness 10000) detected at line 155
 []
  []
 
 
-Overfull \hbox (8.53581pt too wide) in paragraph at lines 154--154
+Overfull \hbox (8.53581pt too wide) in paragraph at lines 155--155
 [][] 
  []
 
+LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <20> not available
+(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 155.
 (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/microtype/mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 154
+LaTeX Font Info:    Trying to load font information for U+msa on input line 155
 .
 (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 154
+LaTeX Font Info:    Trying to load font information for U+msb on input line 155
 .
 (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -602,7 +604,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-54.
+55.
 (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
@@ -611,12 +613,12 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \hbox (badness 10000) detected at line 154
+Underfull \hbox (badness 10000) detected at line 155
 []
  []
 
 
-Underfull \hbox (badness 2680) in paragraph at lines 157--160
+Underfull \hbox (badness 2680) in paragraph at lines 158--161
 []\OT1/phv/m/n/12 (+20) Abstract length and content varies depending on article
  type. Refer to []$\OT1/pcr/m/n/12 http : / /
  []
@@ -634,38 +636,38 @@ Overfull \vbox (3.49998pt too high) has occurred while \output is active []
 
 [2]
 LaTeX Font Info:    Trying to load font information for OML+ptm on input line 3
-22.
+24.
 (/Users/maxwelco/Library/TinyTeX/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <12> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 322.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 324.
 
 Overfull \vbox (3.49998pt too high) has occurred while \output is active []
 
 [3]
-<../data analysis/weather/Figure 1.png, id=108, 2195.20125pt x 1356.06625pt>
+<../data analysis/weather/Figure 1.png, id=106, 2195.20125pt x 1356.06625pt>
 File: ../data analysis/weather/Figure 1.png Graphic file (type png)
 <use ../data analysis/weather/Figure 1.png>
 Package pdftex.def Info: ../data analysis/weather/Figure 1.png  used on input l
-ine 403.
+ine 415.
 (pdftex.def)             Requested size: 455.24455pt x 284.51332pt.
-<../data analysis/figures/combine 3.png, id=110, 2195.20125pt x 2710.125pt>
+<../data analysis/figures/combine 3.png, id=108, 2195.20125pt x 2710.125pt>
 File: ../data analysis/figures/combine 3.png Graphic file (type png)
 <use ../data analysis/figures/combine 3.png>
 Package pdftex.def Info: ../data analysis/figures/combine 3.png  used on input 
-line 412.
+line 424.
 (pdftex.def)             Requested size: 426.77293pt x 739.76605pt.
 
-LaTeX Warning: Float too large for page by 82.36395pt on input line 417.
+LaTeX Warning: Float too large for page by 82.36395pt on input line 429.
 
 
 Overfull \vbox (3.49998pt too high) has occurred while \output is active []
 
 [4]
-Underfull \hbox (badness 4505) in paragraph at lines 492--497
-[][]\OT1/ptm/m/n/12 (+20) Kistner, E. J., and Hatfield, J. L. (2018). Potential
- Geographic Distribution of Palmer
+Underfull \hbox (badness 1253) in paragraph at lines 502--506
+[][]\OT1/ptm/m/n/12 (+20) Heap, I. (2021). Internation Herbicide-Resistant Weed
+ Database. Available at: []$\OT1/pcr/m/n/12 http : / / www .
  []
 
 
@@ -675,6 +677,12 @@ Overfull \vbox (3.49998pt too high) has occurred while \output is active []
 Overfull \vbox (3.49998pt too high) has occurred while \output is active []
 
 [6 <../data analysis/figures/combine 3.png>]
+Underfull \hbox (badness 4505) in paragraph at lines 526--531
+[][]\OT1/ptm/m/n/12 (+20) Kistner, E. J., and Hatfield, J. L. (2018). Potential
+ Geographic Distribution of Palmer
+ []
+
+
 Overfull \vbox (3.49998pt too high) has occurred while \output is active []
 
 [7]
@@ -690,13 +698,13 @@ Package rerunfilecheck Info: File `Frontiers.out' has not changed.
 (rerunfilecheck)             Checksum: A965D3D2A4A2A628D2BEAC38C3121138;2010.
  ) 
 Here is how much of TeX's memory you used:
- 15673 strings out of 480470
- 240175 string characters out of 5897860
- 597811 words of memory out of 5000000
- 32757 multiletter control sequences out of 15000+600000
- 448157 words of font info for 242 fonts, out of 8000000 for 9000
+ 15702 strings out of 480470
+ 240480 string characters out of 5897860
+ 596096 words of memory out of 5000000
+ 32761 multiletter control sequences out of 15000+600000
+ 450902 words of font info for 256 fonts, out of 8000000 for 9000
  18 hyphenation exceptions out of 8191
- 87i,8n,131p,1035b,427s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 87i,8n,131p,1035b,407s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{section*.12} has been referenced but does not exi
 st, replaced by a fixed one
 
@@ -731,10 +739,10 @@ lvetic/uhvro8a.pfb></Users/maxwelco/Library/TinyTeX/texmf-dist/fonts/type1/urw/
 times/utmb8a.pfb></Users/maxwelco/Library/TinyTeX/texmf-dist/fonts/type1/urw/ti
 mes/utmr8a.pfb></Users/maxwelco/Library/TinyTeX/texmf-dist/fonts/type1/urw/time
 s/utmri8a.pfb>
-Output written on Frontiers.pdf (8 pages, 1258962 bytes).
+Output written on Frontiers.pdf (8 pages, 1265594 bytes).
 PDF statistics:
- 277 PDF objects out of 1000 (max. 8388607)
- 236 compressed objects within 3 object streams
- 74 named destinations out of 1000 (max. 500000)
- 77960 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 287 PDF objects out of 1000 (max. 8388607)
+ 246 compressed objects within 3 object streams
+ 78 named destinations out of 1000 (max. 500000)
+ 82056 words of extra memory for PDF output out of 89155 (max. 10000000)
 
