@@ -1,6 +1,6 @@
 ---
-title: "Adaptation of Palmer amaranth (*Amaranthus palmeri*) to agroecossystems"
-runtitle: "Short Title"
+title: "Palmer amaranth (*Amaranthus palmeri*) adaptation to agroecossystems"
+runtitle: "Palmer amaranth adaptation"
 documentclass: frontiersSCNS  # or frontiersHLTH, or frontiersFPHY
 author:
   - name: Maxwel C Oliveira
@@ -55,7 +55,7 @@ and length according to article type.
 
 %All article types: you may provide up to 8 keywords; at least 5 are mandatory.
 \tiny
- \keyFont{ \section{Keywords:} Text Text Text Text Text Text Evolution Weed } 
+ \keyFont{ \section{Keywords:} Evolution Flowering Management Pigweed Weed} 
 
 \end{abstract}
 
@@ -88,6 +88,10 @@ The study was performed with a *A. palmeri* accession (Per1) from Perkins County
 
 The experiment was conducted in 2018 and 2019 under field conditions at five locations: Arlington (Washington County, Wisconsin), Clay Center (Clay County, Nebraska), Grant (Perkins County, Nebraska), Lincoln (Lancaster County, Nebraska), and Macomb (McDonough County, Illinois).
 
+```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
+knitr::include_graphics("../data analysis/weather/Figure 1.png")
+```
+
 The field experimental unit were six adjacent 9.1 m wide (12 rows at 72.2 cm row spacing) by 10.7 m long. Each experimental unit was planted with corn or soybean, or under fallow condition. Palmer amaranth seedlings were  transplanted to the field experiment by making a whole in the soil (6 cm deep and 8 cm wide); and gently transferring to the ground (potting mix + two seedlings). After a week, one was eliminated and one was kept. There were two transplant timing: first (June 1^st^) and second (July 1^st^). There were 24 Palmer amaranth plants in each experimental unit, with a total of 144 plants. The study was repeated twice. 
 
 After transplanting, Palmer amaranth flowering was monitored until the end of the study. When a plant started flowering, the day was recorded, plant sex was identified as male or female, and plant height was measured from soil surface to the plant top. Then, aboveground plant biomass was harvest near soil surface and oven dried at 65 C until reaching constant weight before the weight of biomass (g plant^-1^) was recorded.   
@@ -110,13 +114,11 @@ Palmer amaranth height and biomass were performed with a linear mixed model usin
 
 <!-- Comments should be HTML-style comments -->
 
-## Subsection 1 {-}
+## Cumulative flowering {-}
 
 You can use `R` chunks directly to plot graphs.  
 
-```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
-knitr::include_graphics("../data analysis/weather/Figure 1.png")
-```
+
 
 
 ```{r fig2, echo = FALSE, message=FALSE, fig.show = "hide"}
@@ -124,7 +126,7 @@ knitr::include_graphics("../data analysis/figures/combine 3.png")
 ```
 
 
-## Subsection 2 {-}
+## Palmer amaranth height and biomass {-}
 
 Frontiers requires figures to be submitted individually, in the same order as
 they are referred to in the manuscript. Figures will then be automatically
@@ -168,36 +170,12 @@ conflict of interest.
 
 # Author Contributions {-}
 
-MCO design, wrote, 
-
-<!--  
-
-When determining authorship the following criteria should be observed:
-
- - Substantial contributions to the conception or design of the work; or the
-   acquisition, analysis, or interpretation of data for the work; AND
- - Drafting the work or revising it critically for important intellectual
-   content; AND
- - Final approval of the version to be published ; AND
- - Agreement to be accountable for all aspects of the work in ensuring that
-   questions related to the accuracy or integrity of any part of the work are
-   appropriately investigated and resolved.
-
-Contributors who meet fewer than all 4 of the above criteria for authorship
-should not be listed as authors, but they should be acknowledged.
-(http://www.icmje.org/roles_a.html)
-
--->
-
-The statement about the authors and contributors can be up to several sentences
-long, describing the tasks of individual authors referred to by their initials
-and should be included at the end of the manuscript before the References
-section.
+RW: designed the experiments; AJ, CP, MB, MO, and SS: conducted the experiments; MO: analyzed the data and wrote the manuscript; AJ, CP, MB, MO, SS, and RW: conceptualized the research. All authors reviewed the manuscript.
 
 
 # Acknowledgments {-}
 
-Funding:
+Funding: This work received no specific grant from any funding agency, commercial, or not-for-profit sectors
 
 # Supplemental Data 
 
@@ -220,7 +198,7 @@ compiling it again using the traditional LaTeX commands.
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
-```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Figure caption', out.width = "150mm", out.height = "260mm"}
+```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Figure caption', out.width = "150mm", out.height = "200mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
