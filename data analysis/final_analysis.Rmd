@@ -262,6 +262,8 @@ summary(model4)
 ed_values4 <- ED(model4, c(10, 50, 90), interval = "delta", type = "absolute")
 ```
 
+
+
 ```{r}
 ed_values4 %>% 
   as.data.frame() %>% 
@@ -389,7 +391,34 @@ result3 %>%
 ggsave("figures/Combined1.png", width = 8, height = 4)
 ```
 
-Cumulative flowering of Palmer amaranth at first and second transplant timing (A) and day of year of 10%, 50%, and 90% cumulative flowering at first and second transplant timing (B)
+
+
+```{r}
+result3 %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  mutate(crop = fct_recode(crop, 
+                            "<b style='color:#568EA3;'>corn</b>" = "corn",
+                            "<b style='color:#84DCC6;'>fallow</b>" = "fallow",
+                            "<b style='color:#F79F79;'>soybean</b>" = "soybean")) %>% 
+  ggplot(aes(x = crop, y = estimate)) +
+  facet_grid(~ month) +
+  coord_flip() +
+  geom_point(aes(color = ed), 
+             size = 1,
+             position = position_dodge2(width = 0.4)) +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold"),
+        plot.title = element_markdown(),
+        plot.title.position = "plot",
+        axis.text.x = element_markdown(angle = 30),
+        axis.text.y = element_markdown())
+```
+
 
 ```{r}
 (wrap_elements(full = curv1 | curv2)) / wrap_elements(full = figure) +
@@ -452,6 +481,10 @@ analysis$emmeans[[1]] %>%
   as_tibble() %>% 
   mutate(month = "First transplanting") %>% 
   bind_rows(second) -> result
+
+multcomp::cld(analysis$emmeans[[1]], 
+              alpha=0.05, Letters=letters, 
+              adjust="none", reversed = TRUE)
 ```
 
 ```{r}
