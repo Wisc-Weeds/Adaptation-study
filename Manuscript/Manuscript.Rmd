@@ -85,7 +85,7 @@ The experiment was conducted in 2018 and 2019 under field conditions at five loc
 A glyphosate-resistant soybean cultivar (DSR-1950 R2Y at 296,400 seeds ha 1), and a corn hybrid were planted at 
 
 
-Monthly mean air temperature and sum precipitation were collected from June through September across the five locations in 2018 and 2019 (Figure 1)
+Monthly mean air temperature and sum precipitation were obtained using Daymet weather data from June through September across the five locations in 2018 and 2019 [@correndo2021] (Figure 1)
 
 ```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
 knitr::include_graphics("../data analysis/weather/Figure 1.png")
