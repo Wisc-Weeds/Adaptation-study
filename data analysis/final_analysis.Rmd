@@ -128,8 +128,13 @@ nd$pmax <- pm[,3]
 
 ```{r}
 ggplot(month_jun, 
-       aes(x = doyh, y = prob*100, color=crop, shape = crop)) + 
-  geom_line(data=nd, aes(x=doyh, y = pm, color=crop, shape = crop), size=1) +
+       aes(x = doyh, y = prob*100, 
+           color=crop, 
+           shape = crop)) + 
+  geom_line(data=nd, aes(x=doyh, y = pm, 
+                         color=crop, 
+                         shape = crop),
+            size=1) +
   geom_point(alpha = 0.2) +
   geom_ribbon(data=nd, aes(x=doyh, y = pm, 
                            ymin = pmin, 
@@ -142,19 +147,36 @@ ggplot(month_jun,
   scale_y_continuous(limits = c(0, 100), breaks = c(0,25,50,75,100)) +
   labs(x = "Day of year", y = "% cumulative flowering",
        color = NULL) +
-  annotate("text", x = 235, y = 1, fontface = "bold",
+  annotate("text", x = 175, y = 99, fontface = "bold",
            family = "roboto", alpha = 1, size = 3,
-           label = "First transplanting", color = 1) +
+           label = "First transplanting", color = "#dadfe1") +
   theme_test(base_family = "roboto") +
-  scale_color_manual(name = "", values = c("#568EA3", "#84DCC6", "#F79F79"),
-                     labels = c("corn", "fallow", "soybean")) +
-  scale_fill_manual(name = "", values = c("#568EA3", "#84DCC6", "#F79F79"),
-                    labels = c("corn", "fallow", "soybean")) +
+  scale_color_manual(name = "", 
+                    values = c("#30123bFF", 
+                               "#fb832d",
+                               "#28bbecff"),
+                     labels = c("corn", 
+                                "fallow", 
+                                "soybean")) +
+  scale_fill_manual(name = "", 
+                    values = c("#30123bFF", 
+                               "#fb832d",
+                               "#28bbecff"),
+                    labels = c("corn", 
+                               "fallow", 
+                               "soybean")) +
   scale_shape_manual(name = "", values = c(1,2,3), 
                      labels = c("corn", "fallow", "soybean")) +
-  theme(legend.position = c(0.2, 0.85),
+  theme(legend.position = c(0.80, 0.2),
         legend.background = element_rect(fill = NA)) -> curv1
 curv1
+```
+
+
+```{r}
+library(scales)
+show_col(viridis_pal(option = "C")(9)) 
+show_col(wsj_pal()(9))
 ```
 
 
@@ -235,11 +257,21 @@ ggplot(month_jul,
   theme_test(base_family = "roboto") +
   annotate("text", x = 180, y = 99, fontface = "bold",
            family = "roboto", alpha = 1, size = 3,
-           label = "Second transplanting", color = 2) +
-  scale_color_manual(name = "", values = c("#568EA3", "#84DCC6", "#F79F79"),
-                     labels = c("corn", "fallow", "soybean")) +
-  scale_fill_manual(name = "", values = c("#568EA3", "#84DCC6", "#F79F79"),
-                    labels = c("corn", "fallow", "soybean")) +
+           label = "Second transplanting", color = "#dadfe1") +
+  scale_color_manual(name = "", 
+                    values = c("#30123bFF", 
+                               "#fb832d",
+                               "#28bbecff"),
+                     labels = c("corn", 
+                                "fallow", 
+                                "soybean")) +
+  scale_fill_manual(name = "", 
+                    values = c("#30123bFF", 
+                               "#fb832d",
+                               "#28bbecff"),
+                    labels = c("corn", 
+                               "fallow", 
+                               "soybean")) +
   scale_shape_manual(name = "", values = c(1,2,3), 
                      labels = c("corn", "fallow", "soybean")) +
   theme(legend.position = "none") -> curv2
@@ -250,7 +282,7 @@ curv2
 ```{r}
 curv1 | curv2 -> curve1
 
-ggsave("figures/curve.png")
+#ggsave("figures/curve.png")
 ```
 
 
@@ -311,18 +343,17 @@ label4 <- tibble(ed = "50% flowering",
 ```
 
 
-
-```{r}
+```{r eval = FALSE, include=FALSE}
 result3 %>% 
   mutate(ed = case_when(
     ed == "10" ~ "10% flowering",
     ed == "50" ~ "50% flowering",
     ed == "90" ~ "90% flowering",
     TRUE ~ "ed")) %>% 
-  mutate(crop = fct_recode(crop, 
-                            "<b style='color:#568EA3;'>corn</b>" = "corn",
-                            "<b style='color:#84DCC6;'>fallow</b>" = "fallow",
-                            "<b style='color:#F79F79;'>soybean</b>" = "soybean")) %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>fallow</b>" = "fallow",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>% 
   ggplot(aes(x = crop, y = estimate)) +
   geom_segment(aes(x = 0.8, xend = 3.2, y = 153, yend = 153), 
              color = 1,
@@ -390,14 +421,14 @@ result3 %>%
         axis.text.x = element_markdown(angle = 30),
         axis.text.y = element_markdown()) -> figure
 
-ggsave("figures/Combined1.png", width = 8, height = 4)
+#ggsave("figures/Combined1.png", width = 8, height = 4)
 ```
 
-```{r}
+```{r eval = FALSE, include=FALSE}
 (wrap_elements(full = curv1 | curv2)) / wrap_elements(full = figure) +
    plot_layout(heights = c(1.5, 1.5)) + plot_annotation(tag_levels = 'A')
 
-ggsave("figures/Combined2.png", height = 6)
+#ggsave("figures/Combined2.png", height = 6)
 ```
 
 
@@ -411,10 +442,10 @@ result3 %>%
     ed == "50" ~ "50% flowering",
     ed == "90" ~ "90% flowering",
     TRUE ~ "ed")) %>% 
-  mutate(crop = fct_recode(crop, 
-           "<b style='color:#568EA3;'>corn</b>" = "corn",
-           "<b style='color:#84DCC6;'>fallow</b>" = "fallow",
-           "<b style='color:#F79F79;'>soybean</b>" = "soybean")) %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>fallow</b>" = "fallow",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>%  
   ggplot(aes(x = crop, y = estimate)) +
   coord_flip() +
   labs(x = NULL, y = "Day of year") +
@@ -484,7 +515,7 @@ jun1 +
            label = "50% flowering",
            size = 2, color = "#ff420e",
            fontface = "bold") +
-  geom_curve(x = 1.15, y = 255,
+  geom_curve(x = 1.14, y = 256,
              xend = 1.0, yend = 260,
              arrow = arrow(length = unit(0.07, "inch")), 
              color = "#ffd320",
@@ -494,14 +525,14 @@ jun1 +
            size = 2, color = "#ffd320",
            fontface = "bold") -> jun2
 
-ggsave("figures/june1.png")
+#ggsave("figures/june1.png")
 ```
 
 ```{r}
 curv1 + wrap_elements(full =jun2) +
   plot_layout(widths = c(1, 1.3)) -> fig1
 
-ggsave("figures/fig1.png", width = 6, height = 3)
+#ggsave("figures/fig1.png", width = 6, height = 3)
 ```
 
 
@@ -509,15 +540,15 @@ ggsave("figures/fig1.png", width = 6, height = 3)
 curv2 + wrap_elements(full =jul2) +
   plot_layout(widths = c(1, 1.3)) -> fig2
 
-ggsave("figures/fig2.png", width = 6, height = 3)
+#ggsave("figures/fig2.png", width = 6, height = 3)
 ```
 
 
 ```{r}
-fig1 / fig2 #+
-#  plot_annotation(tag_levels = 'A')
+wrap_elements(full = fig1) / wrap_elements(full = fig2) +
+  plot_annotation(tag_levels = 'A')
 
-ggsave("figures/figure 3.png", width = 6, height = 6)
+ggsave("figures/Figure 2.png", width = 6, height = 6)
 ```
 
 
@@ -595,24 +626,13 @@ jul1 +
              position = position_dodge2(width = 0.4)) +
   scale_color_calc() -> jul2
 
-ggsave("figures/july1.png")
+#ggsave("figures/july1.png")
 ```
 
-```{r}
-jun2 + jul2
+```{r eval = FALSE}
+#jun2 + jul2
 
-ggsave("figures/figure 3.png")
-```
-
-
-
-
-
-```{r}
-(wrap_elements(full = curv1 | curv2)) / wrap_elements(jun2 + jul2) +
-   plot_layout(heights = c(1.5, 1.5)) + plot_annotation(tag_levels = 'A')
-
-ggsave("figures/Combined2.png", height = 6)
+#ggsave("figures/Figure 2.png")
 ```
 
 
@@ -694,21 +714,21 @@ emmeans(model1, ~ crop * month, type = "response") %>%
 
 ```{r}
 result %>% 
-  mutate(crop = fct_recode(crop, 
-                            "<b style='color:#568EA3;'>corn</b>" = "corn",
-                            "<b style='color:#84DCC6;'>fallow</b>" = "fallow",
-                            "<b style='color:#F79F79;'>soybean</b>" = "soybean")) %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>fallow</b>" = "fallow",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>%
   ggplot(aes(y = crop, 
              x = response,
              color = month)) +
   geom_point(size = 2,
              position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
-  geom_text(aes(x = 102, y = 1.7), 
-            size = 2, hjust = 0,
+  annotate("text", x = 102, y = 1.7, 
+            size = 2.5, hjust = 0,
             label = "First transplanting", color = 1) +
-  geom_text(aes(x = 120, y = 2.3), 
-            size = 2, hjust = 0,
+  annotate("text", x = 120, y = 2.3, 
+            size = 2.5, hjust = 0,
             label = "Second transplanting", color = 2) +
   geom_curve(aes(x = 95, y = 1.88,
                  xend = 100, yend = 1.75),
@@ -739,7 +759,7 @@ result %>%
         axis.text.y = element_markdown()) -> figA
   
 
-ggsave("figures/biomass.png", width = 4, height = 4)
+#ggsave("figures/biomass.png", width = 4, height = 4)
 ```
 
 
@@ -787,10 +807,10 @@ emmeans(model2, ~ crop * month, type = "response") %>%
 
 ```{r}
 result2 %>% 
-  mutate(crop = fct_recode(crop, 
-                            "<b style='color:#568EA3;'>corn</b>" = "corn",
-                            "<b style='color:#84DCC6;'>fallow</b>" = "fallow",
-                            "<b style='color:#F79F79;'>soybean</b>" = "soybean")) %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>fallow</b>" = "fallow",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>%
   ggplot(aes(y = crop, 
              x = response,
              color = month)) +
@@ -815,7 +835,7 @@ result2 %>%
         axis.text.y = element_markdown()) -> figB
   
 
-ggsave("figures/height.png", width = 4, height = 4)
+#ggsave("figures/height.png", width = 4, height = 4)
 ```
 
 
@@ -824,17 +844,17 @@ ggsave("figures/height.png", width = 4, height = 4)
 (figA | figB) +
   plot_annotation(tag_levels = 'A')
 
-ggsave("figures/figure 3.png")
+ggsave("figures/Figure 3.png", width = 6, height = 3)
 ```
 
 
 
 
-```{r}
+```{r eval=FALSE}
 wrap_elements(full = curve1) / (figure) / (figA | figB) +
    plot_layout(heights = c(1.5, 1.25, 1.25))
 
-ggsave("figures/combine 3.png", height = 9)
+#ggsave("figures/combine 3.png", height = 9)
 ```
 
 ```{r}

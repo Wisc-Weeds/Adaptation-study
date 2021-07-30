@@ -119,7 +119,7 @@ Palmer amaranth height and biomass were performed with a linear mixed model usin
 Palmer amaranth cumulative flowering from first transplant timing ranged from late June to early September (Figure 2). Palmer amaranth growing in corn resulted in a longer flowering pattern compared to fallow and soybean. Palmer amaranth reached 10% flowering in soybean at doy 180, which was slightly different from fallow (doy 180.9; *P* = 0.01) and corn (doy 181.7; *P* = 0.00). Nonetheless, the 10% cumulative Palmer amaranth flowering in soybean, fallow and corn occurred at the end of June. The 50% Palmer amaranth cumulative flowering occurred in July. For example, Palmer amaranth reached 50% in fallow at doy 193.4, followed by soybean (doy 194.8), corn (doy 206.6). Similar trend was observed at 90% Palmer amaranth cumulative flowering. Palmer amaranth growing in corn reached 90% flowering at doy 252.6 (early September), which was 37.8 and 32.2 days after Palmer amaranth 90% flowering in fallow and soybean, respectively.  
 
 ```{r fig2, echo = FALSE, message=FALSE, fig.show = "hide"}
-knitr::include_graphics("../data analysis/figures/Combined2.png")
+knitr::include_graphics("../data analysis/figures/Figure 2.png")
 ```
 
 Palmer amaranth cumulative flowering from second transplanting timing ranged from mid July to mid September (Figure 2). All cumulative flowering comparisons among agroecossystems were significant (*P* < 0.00) Palmer amaranth growing in fallow resulted in earlier flowering time compared to soybean and corn. Palmer amaranth growing in fallow reached 10%, 50%, and 90% flowering time at day 203.8, 214.4, and 232.2, respectively. Palmer amaranth growing in soybean reached 10% flowering at doy 210.9, which was 6 days prior to corn (*P*-value = 0.00). Similar trend was observed at 50% flowering, whereas Palmer amaranth reached 50% flowering in corn (doy 233.0) 4 days after soybeans (doy 228.9; *P* = 0.00). The 90% Palmer amaranth cumulative flowering occurred at same day in corn (260.9) and soybean (260.5; *P* = 0.66).  
@@ -149,7 +149,7 @@ multcomp::cld(analysis$emmeans[[2]],
 
 
 ```{r fig3, echo = FALSE, message=FALSE, fig.show = "hide"}
-knitr::include_graphics("../data analysis/figures/figure 3.png")
+knitr::include_graphics("../data analysis/figures/Figure 3.png")
 ```
 
 
@@ -224,7 +224,7 @@ compiling it again using the traditional LaTeX commands.
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
-```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Cumulative flowering of Palmer amaranth at first and second transplant timing (A) and day of year of 10, 50, and 90 cumulative flowering at first and second transplant timing (B)', out.width = "160mm", out.height = "130mm"}
+```{r, Figure-2, ref.label = "fig2", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Cumulative flowering of Palmer amaranth at first and second transplant timing (A) and day of year of 10, 50, and 90 cumulative flowering at first and second transplant timing (B)', out.width = "130mm", out.height = "130mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
