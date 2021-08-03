@@ -1,0 +1,69 @@
+---
+title: "bayses"
+author: "Maxwel Coura Oliveira"
+date: "8/2/2021"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(rstanarm)
+library(brms)
+library(emmeans)
+```
+
+```{r}
+data <- read_csv("../data/data2.csv")
+```
+
+###--------------------------
+
+```{r}
+data %>% 
+  filter(location != "grant") %>% 
+  mutate(location = str_replace(location, "havelock", "lincoln")) %>% 
+  mutate(harvest = case_when(
+    location == "clay center" & doyh == 169 ~ "8/18/2018",
+    TRUE ~ harvest
+  )) -> data1
+```
+
+
+```{r}
+data1 %>% 
+  rename(month = planting) %>% 
+  mutate_at(c("year", "location"), as_factor) %>% 
+  mutate(month = fct_recode(month,
+                            "First transplanting" = "June",
+                            "Second transplanting" = "July")) -> data1
+```
+
+
+```{r}
+data1 %>% 
+  ggplot(aes(x = log(weight))) +
+  geom_histogram()
+```
+
+
+
+```{r message = FALSE}
+brm(weight ~  crop * month +
+                (1|year/location), 
+    data = data1,
+#    control = list(adapt_delta = 0.95),
+    family = skew_normal(link = "identity", 
+                         link_sigma = "log", 
+                         link_alpha = "identity"),
+    warmup = 1000, iter = 2000, chains = 4,
+    prior = set_prior("student_t(0.1, 2, 2)", class = "b")) -> model1
+#    prior = set_prior("normal(0, 10)", class = "b")) -> model1
+```
+
+
+
+```{r}
+emmeans(model1, ~ crop * month, epred = TRUE)
+```
+

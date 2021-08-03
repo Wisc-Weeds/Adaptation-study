@@ -147,7 +147,7 @@ ggplot(month_jun,
   scale_y_continuous(limits = c(0, 100), breaks = c(0,25,50,75,100)) +
   labs(x = "Day of year", y = "% cumulative flowering",
        color = NULL) +
-  annotate("text", x = 175, y = 99, fontface = "bold",
+  annotate("text", x = 165, y = 99, fontface = "bold",
            family = "roboto", alpha = 1, size = 3,
            label = "First cohort", color = "#dadfe1") +
   theme_test(base_family = "roboto") +
@@ -189,6 +189,8 @@ summary(model3)
 ed_values3 <- ED(model3, c(10, 50, 90), interval = "delta", type = "absolute")
 ```
 
+
+
 ```{r}
 ed_values3 %>% 
   as.data.frame() %>% 
@@ -198,8 +200,6 @@ ed_values3 %>%
   janitor::clean_names() %>% 
   mutate_if(is_character, as_factor) -> ed_values3
 ```
-
-
 
 
 
@@ -255,7 +255,7 @@ ggplot(month_jul,
   labs(x = "Day of year", y = "% cumulative flowering",
        title = NULL) +
   theme_test(base_family = "roboto") +
-  annotate("text", x = 180, y = 99, fontface = "bold",
+  annotate("text", x = 170, y = 99, fontface = "bold",
            family = "roboto", alpha = 1, size = 3,
            label = "Second cohort", color = "#dadfe1") +
   scale_color_manual(name = "", 
@@ -436,6 +436,7 @@ result3 %>%
 
 ```{r}
 result3 %>% 
+  mutate(estimate = round(estimate, 1)) %>% 
   filter(month == "First transplanting") %>% 
   mutate(ed = case_when(
     ed == "10" ~ "10% flowering",
@@ -492,35 +493,46 @@ result3 %>%
 ```
 
 ```{r}
+library(ggrepel)
 jun1 +
     geom_point(aes(color = ed), 
              size = 2,
              position = position_dodge2(width = 0.4)) +
+    geom_text_repel(aes(label = estimate, 
+                         x = crop, color = ed),
+                    size = 2,
+                    force_pull = 0,
+                    direction = "y",
+                    point.padding = NA,
+                    min.segment.length = 14,
+                    vjust = 0.5,
+                    position = position_dodge2(width = 0.4),
+                    seed = 455) +
   scale_color_calc() +
-  geom_curve(x = 2.85, y = 183,
-             xend = 2.75, yend = 188,
-             arrow = arrow(length = unit(0.07, "inch")), 
-             color = "#004586",
-             size = 0.4, curvature = -0.3) +
-  annotate("text", x = 2.65, y = 195, 
+#  geom_curve(x = 2.85, y = 183,
+#             xend = 2.75, yend = 188,
+#             arrow = arrow(length = unit(0.07, "inch")), 
+#             color = "#004586",
+#             size = 0.4, curvature = -0.3) +
+  annotate("text", x = 3.3, y = 260, 
            label = "10% flowering",
            size = 2, color = "#004586",
            fontface = "bold") + 
-  geom_curve(x = 2, y = 197,
-             xend = 1.9, yend = 203,
-             arrow = arrow(length = unit(0.07, "inch")), 
-             color = "#ff420e",
-             size = 0.4, curvature = -0.3) +
-  annotate("text", x = 1.80, y = 210, 
+#  geom_curve(x = 2, y = 197,
+#             xend = 1.9, yend = 203,
+#             arrow = arrow(length = unit(0.07, "inch")), 
+#             color = "#ff420e",
+#             size = 0.4, curvature = -0.3) +
+  annotate("text", x = 3.1, y = 260, 
            label = "50% flowering",
            size = 2, color = "#ff420e",
            fontface = "bold") +
-  geom_curve(x = 1.14, y = 256,
-             xend = 1.0, yend = 260,
-             arrow = arrow(length = unit(0.07, "inch")), 
-             color = "#ffd320",
-             size = 0.4, curvature = -0.3) +
-  annotate("text", x = 0.95, y = 260, 
+#  geom_curve(x = 1.14, y = 256,
+#             xend = 1.0, yend = 260,
+#             arrow = arrow(length = unit(0.07, "inch")), 
+#             color = "#ffd320",
+#             size = 0.4, curvature = -0.3) +
+  annotate("text", x = 2.9, y = 260, 
            label = "90% flowering",
            size = 2, color = "#ffd320",
            fontface = "bold") -> jun2
@@ -541,6 +553,7 @@ curv1 + wrap_elements(full =jun2) +
 
 ```{r}
 result3 %>% 
+  mutate(estimate = round(estimate, 1)) %>% 
   filter(month == "Second transplanting") %>% 
   mutate(ed = case_when(
     ed == "10" ~ "10% flowering",
@@ -597,21 +610,35 @@ result3 %>%
 ```
 
 
-
-
 ```{r}
 jul1 +
     geom_point(aes(color = ed), 
              size = 2,
              position = position_dodge2(width = 0.4)) +
+    geom_text_repel(aes(label = estimate, 
+                         x = crop, color = ed),
+                    size = 2,
+                    force_pull = 0,
+                    direction = "y",
+                    point.padding = NA,
+                    min.segment.length = 14,
+                    vjust = 0.5,
+                    position = position_dodge2(width = 0.4),
+                    seed = 455) +
   scale_color_calc() -> jul2
-
-#ggsave("figures/july1.png")
 ```
 
 
+
+
+
+
+
+
+
+
 ```{r}
-curv2 + wrap_elements(full =jul2) +
+curv2 + wrap_elements(full = jul2) +
   plot_layout(widths = c(1, 1.3)) -> fig2
 
 #ggsave("figures/fig2.png", width = 6, height = 3)
@@ -633,11 +660,7 @@ show_col(calc_pal()(5))
 ```
 
 
-```{r eval = FALSE}
-#jun2 + jul2
 
-#ggsave("figures/Figure 2.png")
-```
 
 
 
@@ -649,6 +672,7 @@ library(lme4)
 library(lmerTest)
 library(emmeans)
 ```
+
 ```{r}
 data1 %>% 
   rename(month = planting) %>% 
@@ -664,6 +688,11 @@ data1 %>%
   group_by(year, location, month, crop) %>% 
   mutate(n = n()) %>% 
   mutate(biomass = weight / n) -> biom
+```
+```{r}
+ biom %>% 
+  group_by(location) %>% 
+  summarise(max(height))
 ```
 
 
@@ -725,38 +754,28 @@ result %>%
   ggplot(aes(y = crop, 
              x = response,
              color = month)) +
-  geom_point(size = 2,
-             position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
-  annotate("text", x = 102, y = 1.7, 
-            size = 2.5, hjust = 0,
-            label = "First transplanting", color = 1) +
-  annotate("text", x = 120, y = 2.3, 
-            size = 2.5, hjust = 0,
-            label = "Second transplanting", color = 2) +
-  geom_curve(aes(x = 95, y = 1.88,
-                 xend = 100, yend = 1.75),
-             color = 1,
-             arrow = arrow(length = unit(0.07, "inch")), 
-             size = 0.4, curvature = 0.3) + 
-  geom_curve(aes(x = 110, y = 2.12,
-                 xend = 116, yend = 2.28),
-             color =2,
-             arrow = arrow(length = unit(0.07, "inch")), 
-             size = 0.4, curvature = -0.3) + 
-#  geom_jitter(data = biom %>% 
-#                rename(response = weight) %>% 
+  geom_jitter(data = data1 %>% 
+                rename(response = weight) %>% 
+                mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>fallow</b>" = "fallow",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")),
 #                filter(month == "First transplanting"), 
-#              alpha = 0.04, 
-#              position = position_dodge2(width = 0.5)) +
+              alpha = 0.02, aes(color = month), size = 1,
+              position = position_dodge2(width = 0.4, reverse = TRUE)) +
   geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
                  position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_color_manual(values = c(2,1),
                       guide = guide_legend(direction = "vertical",
-                                           reverse = FALSE)) +
-#  coord_flip() +
-#  scale_y_continuous(expand = c(0.05, 1)) +
-  labs(x = expression(paste("Biomass (g plant "^"-1",")")), 
+                                           reverse = TRUE)) +
+  geom_text(aes(label = round(response,1), x = upper.CL + 130, color = month),
+            size = 2, fontface = "bold",
+            position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  geom_point(size = 2,
+             position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_x_continuous(limits = c(0,1501), breaks = seq(0, 1500, 300)) +
+  labs(x = expression(paste("Weight (g plant "^"-1",")")), 
        y = NULL, color = NULL) +
   theme_test(base_family = "roboto") +
   theme(legend.position = "none",
@@ -765,7 +784,6 @@ result %>%
 
 #ggsave("figures/biomass.png", width = 4, height = 4)
 ```
-
 
 
 
@@ -809,7 +827,7 @@ emmeans(model2, ~ crop * month, type = "response") %>%
 ```
 
 
-```{r}
+```{r warning = FALSE}
 result2 %>% 
   mutate(crop = fct_recode(crop,
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
@@ -818,20 +836,27 @@ result2 %>%
   ggplot(aes(y = crop, 
              x = response,
              color = month)) +
-  geom_point(size = 2,
-             position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
-#  geom_jitter(data = biom %>% 
-#                rename(response = weight) %>% 
+  geom_jitter(data = data1 %>% 
+                rename(response = height) %>% 
+                mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>fallow</b>" = "fallow",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")),
 #                filter(month == "First transplanting"), 
-#              alpha = 0.04, 
-#              position = position_dodge2(width = 0.5)) +
+              alpha = 0.02, aes(color = month), size = 1,
+              position = position_dodge2(width = 0.4, reverse = TRUE)) +
   geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
                  position = position_dodge2(width = 0.4, reverse = TRUE)) +
   scale_color_manual(values = c(2,1),
                       guide = guide_legend(direction = "vertical",
                                            reverse = TRUE)) +
-  scale_x_continuous(limits = c(0,110), breaks = c(0,25,50,75,100)) +
+  geom_text(aes(label = round(response,1), x = upper.CL + 20, color = month),
+            size = 2, fontface = "bold",
+            position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  geom_point(size = 2,
+             position = position_dodge2(width = 0.4, reverse = TRUE)) +
+#  scale_x_continuous(limits = c(0,300), breaks = c(0,25,50,75,100)) +
   labs(x = expression(paste("Height (cm plant "^"-1",")")), 
        y = NULL, color = NULL) +
   theme_test(base_family = "roboto") +
