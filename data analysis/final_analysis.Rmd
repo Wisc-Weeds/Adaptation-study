@@ -129,10 +129,9 @@ nd$pmax <- pm[,3]
 ```{r}
 ggplot(month_jun, 
        aes(x = doyh, y = prob*100, 
-           color=crop, 
-           shape = crop)) + 
+           color=crop)) + 
   geom_line(data=nd, aes(x=doyh, y = pm, 
-                         color=crop, 
+                         color = crop,
                          shape = crop),
             size=1) +
   geom_point(alpha = 0.2) +
@@ -165,8 +164,8 @@ ggplot(month_jun,
                     labels = c("corn", 
                                "fallow", 
                                "soybean")) +
-  scale_shape_manual(name = "", values = c(1,2,3), 
-                     labels = c("corn", "fallow", "soybean")) +
+  scale_shape_manual(name = "", values = c(1,2,3)) + 
+#                     labels = c("corn", "fallow", "soybean")) +
   theme(legend.position = c(0.80, 0.225),
         legend.background = element_rect(fill = NA)) -> curv1
 curv1
@@ -241,9 +240,9 @@ nd$pmax <- pm[,3]
 
 ```{r}
 ggplot(month_jul, 
-       aes(x = doyh, y = prob*100, color=crop, shape = crop)) + 
+       aes(x = doyh, y = prob*100, color=crop)) + 
   geom_line(data=nd, aes(x=doyh, y = pm, color=crop), size=1) +
-  geom_point(alpha = 0.2) +
+  geom_point(alpha = 0.2, aes(shape = gender)) +
   geom_ribbon(data=nd, aes(x=doyh, y = pm,
                            ymin = pmin, 
                            ymax = pmax, fill=crop), 
@@ -676,68 +675,59 @@ library(emmeans)
 ```{r}
 data1 %>% 
   rename(month = planting) %>% 
-  mutate(month = fct_recode(month,
-                            "First transplanting" = "June",
-                            "Second transplanting" = "July")) -> data1
+  mutate_at(c("year", "location"), as_factor) -> data2
+```
+
+
+
+
+
+```{r}
+#data2 %>%
+#  group_by(month) %>% 
+#  nest(-month) %>% 
+#  mutate(model = map(data, ~ lmer(log(weight) ~ crop * month + 
+#                                 (1|location/year), data = .x)),
+#         anova = map(model, anova),
+#         emmeans = map(model, ~ emmeans(., ~ crop * month, 
+#                                        type = "response"))) -> analysis
+```
+```{r}
+model <- lmer(log(weight) ~ crop * month + 
+                                 (1|location/year), data = data2)
 ```
 
 
 ```{r}
-data1 %>% 
-  filter(!is.na(weight)) %>% 
-  group_by(year, location, month, crop) %>% 
-  mutate(n = n()) %>% 
-  mutate(biomass = weight / n) -> biom
-```
-```{r}
- biom %>% 
-  group_by(location) %>% 
-  summarise(max(height))
+anova(model)
 ```
 
 
 ```{r}
-biom %>%
-  group_by(month) %>% 
-  nest(-month) %>% 
-  mutate(model = map(data, ~ lmer(log(weight) ~ crop + 
-                                 (1|location/year), data = .x)),
-         anova = map(model, anova),
-         emmeans = map(model, ~ emmeans(., ~ crop, 
-                                        type = "response"))) -> analysis
-```
-
-
-```{r}
-#anova
-analysis$anova[[2]]
+emmeans(model, ~ crop * month, type = "response") -> emmeans1
 ```
 
 ```{r}
-analysis$emmeans[[2]] %>% 
-  as_tibble() %>% 
-  mutate(month = "Second transplanting") -> second
-
-analysis$emmeans[[1]] %>% 
-  as_tibble() %>% 
-  mutate(month = "First transplanting") %>% 
-  bind_rows(second) -> result
-
-multcomp::cld(analysis$emmeans[[1]], 
-              alpha=0.05, Letters=letters, 
-              adjust="none", reversed = TRUE)
+multcomp::cld(emmeans1, 
+              alpha=0.05, 
+              Letters=letters, 
+              adjust="none", reversed = TRUE) %>% 
+  as_tibble() -> weight
 ```
 
 ```{r}
-library(ggstance)
-```
+#analysis$emmeans[[2]] %>% 
+#  as_tibble() %>% 
+#  mutate(month = "Second transplanting") -> second
 
-```{r}
-model1 = lmer(log(weight) ~ crop * month + 
-                                 (1|location/year), data = biom)
-anova(model1)
-emmeans(model1, ~ crop * month, type = "response") %>% 
-  as_tibble() -> result
+#analysis$emmeans[[1]] %>% 
+#  as_tibble() %>% 
+#  mutate(month = "First transplanting") %>% 
+#  bind_rows(second) -> result
+
+#multcomp::cld(analysis$emmeans[[1]], 
+#              alpha=0.05, Letters=letters, 
+#              adjust="none", reversed = TRUE)
 ```
 
 
@@ -746,7 +736,7 @@ emmeans(model1, ~ crop * month, type = "response") %>%
 
 
 ```{r}
-result %>% 
+weight %>% 
   mutate(crop = fct_recode(crop,
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
           "<b style='color:#fb832d;'>fallow</b>" = "fallow",
@@ -755,7 +745,7 @@ result %>%
              x = response,
              color = month)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
-  geom_jitter(data = data1 %>% 
+  geom_jitter(data = data2 %>% 
                 rename(response = weight) %>% 
                 mutate(crop = fct_recode(crop,
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
@@ -788,47 +778,58 @@ result %>%
 
 
 ```{r}
-data1 %>%
-  group_by(month) %>% 
-  nest(-month) %>% 
-  mutate(model = map(data, ~ lmer(log(height) ~ crop + 
-                                 (1|location/year), data = .x)),
-         anova = map(model, anova),
-         emmeans = map(model, ~ emmeans(., ~ crop, 
-                                        type = "response"))) -> analysis1
+#data1 %>%
+#  group_by(month) %>% 
+#  nest(-month) %>% 
+#  mutate(model = map(data, ~ lmer(log(height) ~ crop + 
+#                                 (1|location/year), data = .x)),
+#         anova = map(model, anova),
+#         emmeans = map(model, ~ emmeans(., ~ crop, 
+#                                        type = "response"))) -> analysis1
 ```
 
 
 
 ```{r}
 #anova
-analysis1$anova[[2]]
+#analysis1$anova[[2]]
 ```
 
 
 
 ```{r}
-analysis1$emmeans[[2]] %>% 
-  as_tibble() %>% 
-  mutate(month = "Second transplanting") -> second1
+#analysis1$emmeans[[2]] %>% 
+#  as_tibble() %>% 
+# mutate(month = "Second transplanting") -> second1
 
-analysis1$emmeans[[1]] %>% 
-  as_tibble() %>% 
-  mutate(month = "First transplanting") %>% 
-  bind_rows(second1) -> result1
+#analysis1$emmeans[[1]] %>% 
+#  as_tibble() %>% 
+#  mutate(month = "First transplanting") %>% 
+#  bind_rows(second1) -> result1
 ```
 
 ```{r}
 model2 = lmer(log(height) ~ crop * month + 
-                                 (1|location/year), data = biom)
+                                 (1|location/year), data = data2)
 anova(model2)
-emmeans(model2, ~ crop * month, type = "response") %>% 
-  as_tibble() -> result2
 ```
 
 
+```{r}
+emmeans(model2, ~ crop * month, type = "response") -> emmeans2
+```
+
+
+```{r}
+multcomp::cld(emmeans2, 
+              alpha=0.05, 
+              Letters=letters, 
+              adjust="none", reversed = TRUE) %>% 
+  as_tibble() -> height
+```
+
 ```{r warning = FALSE}
-result2 %>% 
+height %>% 
   mutate(crop = fct_recode(crop,
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
           "<b style='color:#fb832d;'>fallow</b>" = "fallow",
@@ -837,7 +838,7 @@ result2 %>%
              x = response,
              color = month)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
-  geom_jitter(data = data1 %>% 
+  geom_jitter(data = data2 %>% 
                 rename(response = height) %>% 
                 mutate(crop = fct_recode(crop,
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
