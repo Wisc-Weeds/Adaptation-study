@@ -903,6 +903,15 @@ data2 %>%
   mutate(doyh = as.numeric(doyh)) -> data3
 ```
 
+```{r}
+library(emoGG)
+```
+, 
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, )) +
+  geom_emoji(emoji = "2640", color = "red")
+```
+
 
 ```{r}
 data2 %>% 
@@ -916,18 +925,36 @@ data2 %>%
   filter(!is.na(doyh)) %>% 
   filter(!is.na(weight)) %>% 
   filter(!is.na(height)) %>% 
-  mutate(doyh = as.numeric(doyh)) -> data3
+  mutate(doyh = as.numeric(doyh)) %>% 
+  mutate(crop = fct_recode(crop, 
+                           "bareground" = "fallow")) -> data3
 ```
+
+```{r}
+sex <- tibble(crop = "bareground",
+               x = x1, y = 638, xend = x2, yend = 640)
+```
+
 
 ```{r}
 data3 %>% 
   ggplot(aes(x = doyh, y = gender_A, color = month, fill = month)) +
   geom_point(alpha = 0.1) +
-  geom_smooth(method = "gam", se = TRUE, stat = "smooth", alpha = 0.1) +
+  geom_emoji(data3 %>% 
+               filter(gender == "f"),
+             mapping = aes(x = 215, y = 0.95),
+             emoji = "2640") +
+  geom_emoji(data3 %>% 
+               filter(gender == "m"),
+             mapping = aes(x = 215, y = 0.05),
+             emoji = "2642") +
+  geom_smooth(method = "gam", se = FALSE, stat = "smooth") +
   theme_test(base_family = "roboto") +
-  facet_wrap(~crop, scales = "free_y") +
+  facet_grid(~crop) +
   scale_color_manual(values = c(2,1)) +
   scale_fill_manual(values = c(2,1)) +
+  scale_x_continuous(limits = c(170, 260), 
+                     breaks = seq(170, 260, 15)) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = "Day of year", y = NULL) +
   theme(legend.position = "none") -> pl_doyh
@@ -939,13 +966,48 @@ ggsave("fig.png", width = 9, height = 4)
 
 ```{r}
 data3 %>% 
-  ggplot(aes(x = height, y = gender_A, color = month, fill = month)) +
+  ggplot(aes(x = weight, y = gender_A, color = month, fill = month)) +
   geom_point(alpha = 0.1) +
-  geom_smooth(method = "gam", se = FALSE, stat = "smooth", alpha = 0.1) +
+  geom_emoji(data3 %>% 
+               filter(gender == "f"),
+             mapping = aes(x = 0.9, y = gender_A),
+             emoji = "2640", size = 0.03) +
+  geom_emoji(data3 %>% 
+               filter(gender == "m"),
+             mapping = aes(x = weight, y = gender_A),
+             emoji = "2642", size = 0.03) +
+  geom_smooth(method = "gam", se = FALSE, stat = "smooth") +
   theme_test(base_family = "roboto") +
-  facet_grid(~crop, scales = "free") +
+  facet_grid(~crop) +
   scale_color_manual(values = c(2,1)) +
   scale_fill_manual(values = c(2,1)) +
+  scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
+  labs(x = expression(paste("Weight (g plant "^"-1",")")), y = NULL) +
+  theme(legend.position = "none") -> pl_weight
+#  xlim(175, 270)
+
+ggsave("fig.png", width = 9, height = 4)
+```
+
+
+```{r}
+data3 %>% 
+  ggplot(aes(x = height, y = gender_A, color = month, fill = month)) +
+#  geom_point(alpha = 0.1) +
+  geom_emoji(data3 %>% 
+               filter(gender == "f"),
+             mapping = aes(x = height, y = gender_A),
+             emoji = "2640", size = 0.03) +
+  geom_emoji(data3 %>% 
+               filter(gender == "m"),
+             mapping = aes(x = height, y = gender_A),
+             emoji = "2642", size = 0.03) +
+  geom_smooth(method = "gam", se = FALSE, stat = "smooth") +
+  theme_test(base_family = "roboto") +
+  facet_grid(~crop) +
+  scale_color_manual(values = c(2,1)) +
+  scale_fill_manual(values = c(2,1)) +
+  scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = expression(paste("Height (cm plant "^"-1",")")), y = NULL) +
   theme(legend.position = "none") -> pl_height
 #  xlim(175, 270)
@@ -954,8 +1016,9 @@ ggsave("fig.png", width = 9, height = 4)
 ```
 
 ```{r}
-data3 %>% 
-  filter(is.na(doyh))
+pl_doyh / pl_weight / pl_height
+
+ggsave("fig.png", width = 6, height = 9)
 ```
 
 
