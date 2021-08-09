@@ -161,6 +161,12 @@ knitr::include_graphics("../data analysis/figures/Figure 3.png")
 knitr::include_graphics("../data analysis/figures/image.jpeg")
 ```
 
+
+```{r fig5, echo = FALSE, message=FALSE, fig.show = "hide"}
+knitr::include_graphics("../data analysis/figures/Figure 4.png")
+```
+
+
 # Discussion {-}  
 
 Our study showed that Palmer amaranth flowering time, biomass and height varied within agroecossystems and cohort timing. In general, Palmer amaranth produced more biomass and taller plants when growing at first cohort rather than second cohort. At first cohort, resources (e.g., soil nutrients) and conditions (e.g., light) were more timely available for both species, crop and weed. High biomass and taller Palmer amaranth plants are likely a weed strategy to compete for light in between crop rows in absence of canopy. In such condition, Palmer amaranth showed an extraordinary plasticity to adapt upon the agroecosystem. This is evident when comparing Palmer amaranth shape, and its extended flowering pattern when growing into corn compared to soybean. Palmer amaranth was taller and thinner when growing within corn. The Palmer amaranth competition strategy was likely to mimic the crop grow and development (Figure 4). These results are concerning as breeding more competitive crop varieties is likely to select more competitive Palmer amaranth biotypes [@bravo2017].
@@ -244,5 +250,9 @@ compiling it again using the traditional LaTeX commands.
 ```
 
 ```{r, Figure-4, ref.label = "fig4", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Harvest Palmer amaranth plants at 40 days after first transplant timing. From left to right, Palmer amaranth growing in fallow, soybean and corn in Arlington, Wisconsin', out.width = "70mm", out.height = "70mm"}
+# You can also refer to code chunks from above to place figures at the bottom.
+```
+
+```{r, Figure-5, ref.label = "fig5", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Cumulative flowering of Palmer amaranth at first and second transplant timing (A) and day of year of 10, 50, and 90 cumulative flowering at first and second transplant timing (B)', out.width = "120mm", out.height = "180mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```

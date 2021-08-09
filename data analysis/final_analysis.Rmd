@@ -694,9 +694,36 @@ data1 %>%
 #         emmeans = map(model, ~ emmeans(., ~ crop * month, 
 #                                        type = "response"))) -> analysis
 ```
+
 ```{r}
 model <- lmer(log(weight) ~ crop * month + 
                                  (1|location/year), data = data2)
+```
+
+```{r}
+data2 %>% 
+  ggplot(aes(x = doyh, y = weight, color = crop)) +
+  geom_smooth(method = "gam", se = FALSE) +
+  facet_grid(~ month, scales = "free") 
+```
+
+
+```{r}
+gam_w <- gam(log(weight) ~ s(doyh, k = 12) + s(height, k = 12) + crop + month + location, 
+             data = data2, 
+             method = "REML")
+gam.check(gam_w)
+summary(gam_w)
+
+plot(gam_w, select = 1, shade = TRUE, shade.col = "hotpink", ylim(0, 400), shift = coef(gam_w)[1])
+
+plot(gam_w, residuals = TRUE, pch = 1, 
+     cex = 1, 
+#     shade = TRUE,
+#     shade.col = "lightblue",
+     seWithMean = TRUE,
+     shift = coef(gam_w)[1]
+)
 ```
 
 
@@ -906,11 +933,7 @@ data2 %>%
 ```{r}
 library(emoGG)
 ```
-, 
-```{r}
-ggplot(iris, aes(Sepal.Length, Sepal.Width, )) +
-  geom_emoji(emoji = "2640", color = "red")
-```
+
 
 
 ```{r}
@@ -930,25 +953,32 @@ data2 %>%
                            "bareground" = "fallow")) -> data3
 ```
 
+
+
 ```{r}
-sex <- tibble(crop = "bareground",
-               x = x1, y = 638, xend = x2, yend = 640)
+first <- tibble(crop = "bareground",
+                x = 200, y = 0.73,
+                label = "First cohort")
+second <- tibble(crop = "bareground",
+                 x = 235, y = 0.4,
+                label = "Second cohort")
+cohortf1 <- tibble(crop = "corn",
+                 x = 215, y = 0.94)
+cohortm1 <- tibble(crop = "corn",
+                 x = 215, y = 0.06)
 ```
 
 
 ```{r}
 data3 %>% 
-  ggplot(aes(x = doyh, y = gender_A, color = month, fill = month)) +
-  geom_point(alpha = 0.1) +
-  geom_emoji(data3 %>% 
-               filter(gender == "f"),
-             mapping = aes(x = 215, y = 0.95),
-             emoji = "2640") +
-  geom_emoji(data3 %>% 
-               filter(gender == "m"),
-             mapping = aes(x = 215, y = 0.05),
-             emoji = "2642") +
-  geom_smooth(method = "gam", se = FALSE, stat = "smooth") +
+  ggplot(aes(x = doyh, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = month)) +
+  geom_emoji(data = cohortf1, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm1, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              se = FALSE, 
+              stat = "smooth") +
   theme_test(base_family = "roboto") +
   facet_grid(~crop) +
   scale_color_manual(values = c(2,1)) +
@@ -957,59 +987,83 @@ data3 %>%
                      breaks = seq(170, 260, 15)) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = "Day of year", y = NULL) +
-  theme(legend.position = "none") -> pl_doyh
+  geom_text(data = first, mapping = aes(x = x, y = y), label = first$label,
+            size = 10, color = 1) +
+  geom_text(data = second, mapping = aes(x = x, y = y), label = second$label,
+            size = 10, color = 2) +
+  theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_doyh
 #  xlim(175, 270)
 
 ggsave("fig.png", width = 9, height = 4)
 ```
 
+```{r}
+cohortf2 <- tibble(crop = "corn",
+                 x = 92, y = 0.94)
+cohortm2 <- tibble(crop = "corn",
+                 x = 92, y = 0.06)
+```
+
 
 ```{r}
 data3 %>% 
-  ggplot(aes(x = weight, y = gender_A, color = month, fill = month)) +
-  geom_point(alpha = 0.1) +
-  geom_emoji(data3 %>% 
-               filter(gender == "f"),
-             mapping = aes(x = 0.9, y = gender_A),
-             emoji = "2640", size = 0.03) +
-  geom_emoji(data3 %>% 
-               filter(gender == "m"),
-             mapping = aes(x = weight, y = gender_A),
-             emoji = "2642", size = 0.03) +
-  geom_smooth(method = "gam", se = FALSE, stat = "smooth") +
+  mutate(crop = fct_relevel(crop,
+                            levels = c("bareground", "corn", "soybean"))) %>% 
+  ggplot(aes(x = weight, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = month)) +
+  geom_emoji(data = cohortf2, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm2, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              se = FALSE, 
+              stat = "smooth") +
   theme_test(base_family = "roboto") +
-  facet_grid(~crop) +
+  facet_grid(~crop, scales = "free") +
   scale_color_manual(values = c(2,1)) +
   scale_fill_manual(values = c(2,1)) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = expression(paste("Weight (g plant "^"-1",")")), y = NULL) +
-  theme(legend.position = "none") -> pl_weight
+  theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_weight
 #  xlim(175, 270)
 
 ggsave("fig.png", width = 9, height = 4)
+```
+```{r}
+cohortf2 <- tibble(crop = "corn",
+                 x = 110, y = 0.94)
+cohortm2 <- tibble(crop = "corn",
+                 x = 110, y = 0.06)
 ```
 
 
 ```{r}
 data3 %>% 
-  ggplot(aes(x = height, y = gender_A, color = month, fill = month)) +
-#  geom_point(alpha = 0.1) +
-  geom_emoji(data3 %>% 
-               filter(gender == "f"),
-             mapping = aes(x = height, y = gender_A),
-             emoji = "2640", size = 0.03) +
-  geom_emoji(data3 %>% 
-               filter(gender == "m"),
-             mapping = aes(x = height, y = gender_A),
-             emoji = "2642", size = 0.03) +
-  geom_smooth(method = "gam", se = FALSE, stat = "smooth") +
+  mutate(crop = fct_relevel(crop,
+                            levels = c("bareground", "corn", "soybean"))) %>% 
+  ggplot(aes(x = height, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = month)) +
+  geom_emoji(data = cohortf2, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm2, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              se = FALSE, 
+              stat = "smooth") +
   theme_test(base_family = "roboto") +
   facet_grid(~crop) +
   scale_color_manual(values = c(2,1)) +
   scale_fill_manual(values = c(2,1)) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = expression(paste("Height (cm plant "^"-1",")")), y = NULL) +
-  theme(legend.position = "none") -> pl_height
+    theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_height
 #  xlim(175, 270)
 
 ggsave("fig.png", width = 9, height = 4)
@@ -1018,7 +1072,90 @@ ggsave("fig.png", width = 9, height = 4)
 ```{r}
 pl_doyh / pl_weight / pl_height
 
-ggsave("fig.png", width = 6, height = 9)
+ggsave("figures/Figure 4.png", width = 6, height = 8)
+```
+
+
+
+
+
+```{r}
+data3 %>% 
+  ggplot(aes(x = height, y = gender_A)) +
+  geom_rug(aes(sides= gender), outside = TRUE) +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              formula = gam_doy,
+              se = TRUE, 
+              stat = "smooth",
+              fullrange=T) +
+  facet_grid(~crop, scales = "free")
+```
+```{r}
+visreg(gam_doy, "doyh", by = "month", 
+       gg= TRUE,
+#       cond=list(month = "June"),
+       scale="response", 
+       overlay=TRUE,
+       ylab="Prob") +
+  guides(color=TRUE) +
+  labs(x = "DOY")
+```
+```{r}
+plot(gam_doy, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
+     trans = plogis,  shade = TRUE, 
+     shade.col = "lightgreen")
+```
+
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean"))
+
+```{r}
+visreg(gam_doy, "height", "crop", 
+       gg= TRUE, overlay=TRUE,
+       scale="response",
+       rug=2,
+       fill.par = list(fill = c("#30123bFF"), alpha = 0.1),
+#       line=list(color = c("#30123bFF"), alpha = 0.1)
+       ) +
+  labs(x = "DOY") +
+#  scale_color_viridis_d(option = "E") +
+#  scale_fill_(alpha = 0.1)  +
+  theme_test() 
+```
+
+
+```{r}
+library(visreg)
+visreg(gam_doy, xvar = "doyh", by = "crop", 
+       gg= TRUE, scale="response", 
+       ylab="Prob", ylim(0,1))
+```
+```{r}
+mgcv::predict.gam(gam_doy, type = "response", se.fit = TRUE)
+```
+
+
+```{r}
+library(mgcv)
+
+data3 %>% 
+  filter(month == "June") -> data4
+
+gam_doy <- gam(gender_A ~ 
+                 s(height, by = crop) + crop + 
+                 s(location, by = year, bs = "re"), 
+               family = "binomial", method = "REML", 
+               data = data4)
+summary(gam_doy)
+plogis(coef(gam_doy)[2])
+
+
+
+plot(gam_doy, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
+     trans = plogis,  shade = TRUE, 
+     shade.col = "lightgreen")
 ```
 
 
