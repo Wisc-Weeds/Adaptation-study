@@ -1215,7 +1215,7 @@ visreg(model_logi, "doyh", scale="response", rug=2,
        xlab="Day of year",
        ylab="P(female)",
        ylim = c(0,1)) +
-  theme_test()
+  theme_test() -> doyf
 ```
 
 ```{r}
@@ -1224,7 +1224,7 @@ visreg(model_logi, "weight", scale="response", rug=2,
        xlab=expression(paste("Weight (g plant "^"-1",")")),
        ylab="P(female)",
        ylim = c(0,1)) +
-  theme_test()
+  theme_test() -> weight_f
 ```
 
 
@@ -1234,8 +1234,19 @@ visreg(model_logi, "height", scale="response", rug=2,
        xlab=expression(paste("Height (g plant "^"-1",")")),
        ylab="P(female)",
        ylim = c(0,1)) +
-  theme_test()
+  theme_test() -> height_f
 ```
+
+
+```{r}
+doyf
+```
+
+
+
+
+
+
 
 ```{r}
 # Probabilities of female with crop
@@ -1263,9 +1274,10 @@ tidy(model_logi, exponentiate = TRUE, conf.level = 0.95) #odds ratio
 
 ```{r}
 # Calculate average marginal effect
-effects_logit_dia = margins::margins(model_logi)
+effects_logit_dia = margins(model_logi)
 # Summary of marginal effect
 summary(effects_logit_dia)
+#For example, the AME value of height is 0.0016 which can be interpreted as a unit increase in height value increases the probability of having female by 0.16%.
 ```
 
 ```{r}

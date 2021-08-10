@@ -110,6 +110,9 @@ The doy for 10, 50, and 90% Palmer amaranth cumulative flowering were determined
 
 Palmer amaranth height and biomass were performed with a linear mixed model using *lmer* function from "lme4" package [@bates2015]. Plant height and biomass were transformed to meet model assumption of normality. In the model, agroecosystem (crop, soybean, fallow) was the fixed effect and year nested with location the random effects. Analysis of variance was performed with *anova* function from "car" package [@fox2018]. Marginal means and compact letter display were estimated with *emmeans* and *cld* from packages "emmeans" and "multcomp" [@hothorn2008].  
 
+
+Palmer amaranth gender was fitted to a binary logistic regression [@bangdiwala2018]. Binary logistic regression is used for predicting binary classes, such gender of Palmer amaranth plants. The whole dataset was splitted into 80% train and 20% test data. The 80% train is used for the model training and the rest 20% is used for checking how the model generalized on unseen dataset. With 80% dataset, a binary response variable, male (0) and female (1), was fitted to a generalized linear model (*glm* function) including day of year harvest, height, weight, crop and month as independent variables. The model family was binomial with a logit function. The model fit was assessed through pseudo R squared values (McFadden, Cox and Snell, Cragg and Uhler) and likelihood ratio using *nagelkerke* function ("rcompanion" package). The marginal effects computation was performed with Average Marginal Effects at every observed value of x and average across the results (AMEs) [@leeper2017] using *margins* function from "margins" package. The rest 20% dataset was predicted using *predict* function with a cutoff estimation for male or female using *performance* function. 
+
 # Results {-}  
 
 <!-- Comments should be HTML-style comments -->
