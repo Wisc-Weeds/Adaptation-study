@@ -1340,4 +1340,183 @@ height %>%
 
 
 
+# GAM try
 
+
+
+
+
+
+```{r}
+data4 %>% 
+  filter(!is.na(doyh)) %>% 
+  summarise(min(doyh), max(doyh))
+```
+
+
+```{r}
+library(mgcv)
+
+data2 %>% 
+    mutate(gender_A = case_when(
+    gender == "m" ~ 0,
+    gender == "f" ~ 1,
+    TRUE ~ NA_real_
+  )) %>% 
+  filter(!is.na(gender)) %>% 
+  mutate_if(is_character, as.factor) %>% 
+  filter(month == "June") -> june
+```
+
+
+```{r}
+gam_doy1 <- gam(gender_A ~ 
+                 s(doyh, by = crop) + crop + 
+                 s(location, by = year, bs = "re"), 
+               family = "binomial", method = "REML", 
+               data = june)
+summary(gam_doy1)
+plogis(coef(gam_doy1)[1])
+
+
+
+plot(gam_doy1, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
+     trans = plogis,  
+     seWithMean = TRUE,
+     shade = TRUE, 
+     shift = coef(gam_doy)[1],
+     shade.col = "lightgreen")
+
+mgcv::predict.gam(gam_doy1, type = "response", se.fit = TRUE)
+```
+
+
+
+
+```{r}
+visreg(gam_doy2, "doyh", "crop", 
+       gg= TRUE, overlay = TRUE,
+       scale="response",
+       jitter=TRUE, 
+#       rug=2
+#       fill.par = list(fill = c("#30123bFF"), alpha = 0.1),
+#       line=list(color = c("#30123bFF"), alpha = 0.1)
+       ) +
+  labs(x = "Day of year", y = " Probability (%)") +
+  facet_grid(scales = "free") +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_color_viridis_d(option = "C") +
+  scale_fill_viridis_d(option = "C", alpha = 0.05) +
+  annotate("text", x = 205, y = 0.90, label = "Second cohort",
+            size = 5, color = 1) +
+  theme_test() 
+```
+
+```{r}
+gam1 <- gam(gender_A ~ 
+                  s(doyh, by = crop) + 
+                  s(height, by = crop) + 
+                  s(weight, by = crop) + 
+                  month +
+                  s(location, by = year, bs = "re"), 
+               family = "binomial", method = "REML", 
+               data = data4)
+
+gam2 <- gam(gender_A ~ 
+                  s(doyh) + 
+                  s(height, by = crop) + 
+                  s(weight, by = crop) + 
+#                  month +
+                  s(location, by = year, bs = "re"), 
+               family = "binomial", method = "REML", 
+               data = data4)
+plot(gam2, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
+     trans = plogis,  
+     seWithMean = TRUE,
+     shade = TRUE, 
+     shift = coef(gam_doy)[1],
+     shade.col = "lightgreen")
+anova(gam1, gam2, test = "F")
+summary(gam2)
+```
+
+
+```{r}
+gam_doy2 <- gam(gender_A ~ 
+                 s(height, by = crop) + 
+                  s(height, by = crop) + 
+                  s(weight, by = crop) + 
+                 s(location, by = year, bs = "re"), 
+               family = "binomial", method = "REML", 
+               data = data4 %>% filter(month == "July"))
+summary(gam_doy2)
+plogis(coef(gam_doy2)[2])
+
+
+
+plot(gam_doy2, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
+     trans = plogis,  
+     seWithMean = TRUE,
+     shade = TRUE, 
+     shift = coef(gam_doy)[1],
+     shade.col = "lightgreen")
+
+mgcv::predict.gam(gam_doy2, type = "response", se.fit = TRUE)
+```
+
+
+
+
+```{r}
+visreg(gam_doy2, "doyh", "crop", 
+       gg= TRUE, overlay = TRUE,
+       scale="response",
+       jitter=TRUE, 
+#       rug=2
+#       fill.par = list(fill = c("#30123bFF"), alpha = 0.1),
+#       line=list(color = c("#30123bFF"), alpha = 0.1)
+       ) +
+  labs(x = "Day of year", y = " Probability (%)") +
+  facet_grid(scales = "free") +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_color_viridis_d(option = "C") +
+  scale_fill_viridis_d(option = "C", alpha = 0.05) +
+  annotate("text", x = 205, y = 0.90, label = "Second cohort",
+            size = 5, color = 1) +
+  theme_test() 
+```
+
+
+```{r}
+data3 %>% 
+  ggplot(aes(x = doyh, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = crop)) +
+  geom_emoji(data = cohortf1, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm1, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = crop), 
+              method = "glm", 
+              se = TRUE, alpha = 0.05,
+              method.args=list(family="binomial"),
+              stat = "smooth") +
+  theme_test(base_family = "roboto") +
+  facet_grid(~month) +
+#  scale_color_manual(values = c(2,1)) +
+#  scale_fill_manual(values = c(2,1)) +
+  scale_color_viridis_d(option = "C") +
+  scale_fill_viridis_d(option = "C", alpha = 0.05) +
+  scale_x_continuous(limits = c(170, 260), 
+                     breaks = seq(170, 260, 15)) +
+  scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
+  labs(x = "Day of year", y = NULL) +
+  geom_text(data = first, mapping = aes(x = x, y = y), label = first$label,
+            size = 10, color = 1) +
+  geom_text(data = second, mapping = aes(x = x, y = y), label = second$label,
+            size = 10, color = 2) +
+  theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_doyh
+#  xlim(175, 270)
+
+ggsave("figures/fig.png", width = 9, height = 4)
+```
