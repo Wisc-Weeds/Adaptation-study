@@ -707,31 +707,9 @@ model <- lmer(log(weight) ~ crop * month +
                                  (1|location/year), data = data2)
 ```
 
-```{r}
-data2 %>% 
-  ggplot(aes(x = doyh, y = weight, color = crop)) +
-  geom_smooth(method = "gam", se = FALSE) +
-  facet_grid(~ month, scales = "free") 
-```
 
 
-```{r}
-gam_w <- gam(log(weight) ~ s(doyh, k = 12) + s(height, k = 12) + crop + month + location, 
-             data = data2, 
-             method = "REML")
-gam.check(gam_w)
-summary(gam_w)
 
-plot(gam_w, select = 1, shade = TRUE, shade.col = "hotpink", ylim(0, 400), shift = coef(gam_w)[1])
-
-plot(gam_w, residuals = TRUE, pch = 1, 
-     cex = 1, 
-#     shade = TRUE,
-#     shade.col = "lightblue",
-     seWithMean = TRUE,
-     shift = coef(gam_w)[1]
-)
-```
 
 
 ```{r}
@@ -813,36 +791,7 @@ weight %>%
 
 
 
-```{r}
-#data1 %>%
-#  group_by(month) %>% 
-#  nest(-month) %>% 
-#  mutate(model = map(data, ~ lmer(log(height) ~ crop + 
-#                                 (1|location/year), data = .x)),
-#         anova = map(model, anova),
-#         emmeans = map(model, ~ emmeans(., ~ crop, 
-#                                        type = "response"))) -> analysis1
-```
 
-
-
-```{r}
-#anova
-#analysis1$anova[[2]]
-```
-
-
-
-```{r}
-#analysis1$emmeans[[2]] %>% 
-#  as_tibble() %>% 
-# mutate(month = "Second transplanting") -> second1
-
-#analysis1$emmeans[[1]] %>% 
-#  as_tibble() %>% 
-#  mutate(month = "First transplanting") %>% 
-#  bind_rows(second1) -> result1
-```
 
 ```{r}
 model2 = lmer(log(height) ~ crop * month + 
@@ -1077,174 +1026,41 @@ ggsave("figures/Figure 4.png", width = 6, height = 8)
 
 
 
-
-
-
-
-
-          "<b style='color:#30123bFF;'>corn</b>" = "corn",
-          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
-          "<b style='color:#28bbecff;'>soybean</b>" = "soybean"))
-
-
-
-
-
-
-
-
 ```{r}
-data4 %>% 
-  filter(!is.na(doyh)) %>% 
-  summarise(min(doyh), max(doyh))
+library(glmmTMB)
 ```
 
 
 ```{r}
-library(mgcv)
-
-data2 %>% 
-    mutate(gender_A = case_when(
-    gender == "m" ~ 0,
-    gender == "f" ~ 1,
-    TRUE ~ NA_real_
-  )) %>% 
-  filter(!is.na(gender)) %>% 
-  mutate_if(is_character, as.factor) %>% 
-  filter(month == "June") -> june
-```
+model1 <- glm(gender_A ~ doyh * crop * month + (1|year/location), 
+                data = data3, family = binomial)
+model2 <- glm(gender_A ~ doyh* crop * month, 
+                data = data3, family = binomial)
+anova(model1, model2, test = "Chisq")
 
 
-```{r}
-gam_doy1 <- gam(gender_A ~ 
-                 s(doyh, by = crop) + crop + 
-                 s(location, by = year, bs = "re"), 
-               family = "binomial", method = "REML", 
-               data = june)
-summary(gam_doy1)
-plogis(coef(gam_doy1)[1])
+summary(model)$coef
+probabilities <- model %>% predict(data3, type = "response")
+head(probabilities)
+contrasts(data3$gender)
+predicted.classes <- ifelse(probabilities > 0.5, "m", "f")
+head(predicted.classes)
+mean(predicted.classes == data3$gender)
 
-
-
-plot(gam_doy1, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
-     trans = plogis,  
-     seWithMean = TRUE,
-     shade = TRUE, 
-     shift = coef(gam_doy)[1],
-     shade.col = "lightgreen")
-
-mgcv::predict.gam(gam_doy1, type = "response", se.fit = TRUE)
-```
-
-
-
-
-```{r}
-visreg(gam_doy2, "doyh", "crop", 
-       gg= TRUE, overlay = TRUE,
-       scale="response",
-       jitter=TRUE, 
-#       rug=2
-#       fill.par = list(fill = c("#30123bFF"), alpha = 0.1),
-#       line=list(color = c("#30123bFF"), alpha = 0.1)
-       ) +
-  labs(x = "Day of year", y = " Probability (%)") +
-  facet_grid(scales = "free") +
-  scale_y_continuous(limits = c(0, 1)) +
-  scale_color_viridis_d(option = "C") +
-  scale_fill_viridis_d(option = "C", alpha = 0.05) +
-  annotate("text", x = 205, y = 0.90, label = "Second cohort",
-            size = 5, color = 1) +
-  theme_test() 
-```
-
-```{r}
-gam1 <- gam(gender_A ~ 
-                  s(doyh, by = crop) + 
-                  s(height, by = crop) + 
-                  s(weight, by = crop) + 
-                  month +
-                  s(location, by = year, bs = "re"), 
-               family = "binomial", method = "REML", 
-               data = data4)
-
-gam2 <- gam(gender_A ~ 
-                  s(doyh) + 
-                  s(height, by = crop) + 
-                  s(weight, by = crop) + 
-#                  month +
-                  s(location, by = year, bs = "re"), 
-               family = "binomial", method = "REML", 
-               data = data4)
-plot(gam2, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
-     trans = plogis,  
-     seWithMean = TRUE,
-     shade = TRUE, 
-     shift = coef(gam_doy)[1],
-     shade.col = "lightgreen")
-anova(gam1, gam2, test = "F")
-summary(gam2)
-```
-
-
-```{r}
-gam_doy2 <- gam(gender_A ~ 
-                 s(height, by = crop) + 
-                  s(height, by = crop) + 
-                  s(weight, by = crop) + 
-                 s(location, by = year, bs = "re"), 
-               family = "binomial", method = "REML", 
-               data = data4 %>% filter(month == "July"))
-summary(gam_doy2)
-plogis(coef(gam_doy2)[2])
-
-
-
-plot(gam_doy2, residuals = FALSE, pch = 1, ylim = c(0,1), cex = 1,
-     trans = plogis,  
-     seWithMean = TRUE,
-     shade = TRUE, 
-     shift = coef(gam_doy)[1],
-     shade.col = "lightgreen")
-
-mgcv::predict.gam(gam_doy2, type = "response", se.fit = TRUE)
-```
-
-
-
-
-```{r}
-visreg(gam_doy2, "doyh", "crop", 
-       gg= TRUE, overlay = TRUE,
-       scale="response",
-       jitter=TRUE, 
-#       rug=2
-#       fill.par = list(fill = c("#30123bFF"), alpha = 0.1),
-#       line=list(color = c("#30123bFF"), alpha = 0.1)
-       ) +
-  labs(x = "Day of year", y = " Probability (%)") +
-  facet_grid(scales = "free") +
-  scale_y_continuous(limits = c(0, 1)) +
-  scale_color_viridis_d(option = "C") +
-  scale_fill_viridis_d(option = "C", alpha = 0.05) +
-  annotate("text", x = 205, y = 0.90, label = "Second cohort",
-            size = 5, color = 1) +
-  theme_test() 
 ```
 
 
 ```{r}
 data3 %>% 
+  filter(crop == "soybean" & month == "July") %>% 
   ggplot(aes(x = doyh, y = gender_A)) +
   geom_point(alpha = 0.1, aes(color = crop)) +
   geom_emoji(data = cohortf1, aes(x = x, y = y), emoji = "2640") +
   geom_emoji(data = cohortm1, aes(x = x, y = y), emoji = "2642") +
   geom_smooth(aes(color = crop), 
-              method = "gam", 
+              method = "glm", 
               se = TRUE, alpha = 0.05,
-              method.args=list(family="binomial", 
-                               type = "response", 
-                               trans = "plogis"),
+              method.args=list(family="binomial"),
               stat = "smooth") +
   theme_test(base_family = "roboto") +
   facet_grid(~month) +
@@ -1266,9 +1082,8 @@ data3 %>%
         strip.text = element_markdown(face = "bold", size = 30)) -> pl_doyh
 #  xlim(175, 270)
 
-ggsave("figures/fig.png", width = 9, height = 4)
+ggsave("figures/fig.png", width = 4, height = 4)
 ```
-
 
 
 ```{r}
@@ -1340,86 +1155,186 @@ lines(gender_A ~ doyh, newdat, col="green4", lwd=2)
 ```
 
 
-```{r}
-model <- glm(gender_A ~ crop * month +, family=binomial(link='logit'),data=data3)
-```
 
-```{r}
-anova(model, test="Chisq")
-```
 
 
 ```{r}
 library(tidymodels)
+library(yardstick)
+library(broom)       # for making model summary tidy
+library(visreg)      # for potting logodds and probability 
+library(margins)     # to calculate Average Marginal Effects
+library(rcompanion)  # to calculate pseudo R2
+library(ROCR) 
+#https://towardsdatascience.com/modelling-binary-logistic-regression-using-tidymodels-library-in-r-part-1-c1bdce0ac055
+#https://towardsdatascience.com/modelling-binary-logistic-regression-using-r-research-oriented-modelling-and-interpretation-f67b3a954101
+```
 
+```{r}
 data3 %>% 
-  mutate(gender_A = as_factor(gender_A)) -> data4
+  mutate(fem = as_factor(if_else(gender == "f", 1, 0))) -> data4
+```
+
+
+```{r}
+# Total number of rows in the data frame
+n <- nrow(data4)
+# Number of rows for the training set (80% of the dataset)
+n_train <- round(0.80 * n)
+# Create a vector of indices which is an 80% random sample
 set.seed(123)
-# Create data split for train and test
-gender_split <- initial_split(data4,
-                                prop = 0.75,
-                                strata = gender_A)
-
-# Create training data
-gender_train <- gender_split %>%
-                    training()
-
-# Create testing data
-gender_test <- gender_split %>%
-                    testing()
-# Number of rows in train and test dataset
-nrow(gender_train)
-nrow(gender_test)
-```
-
-```{r}
-fitted_logistic_model <- logistic_reg() %>%
-        # Set the engine
-        set_engine("glm") %>%
-        # Set the mode
-        set_mode("classification") %>%
-        # Fit the model
-        fit(gender_A ~ ., data = gender_train)
-tidy(fitted_logistic_model)    # Generate Summary Table
-```
-
-
-
-
-
-```{r}
-library(glmmTMB)
+train_indices <- sample(1:n, n_train)
+# Subset the data frame to training indices only
+train <- data4[train_indices, ]
+# Exclude the training indices to create the test set
+test <- data4[-train_indices, ]
 ```
 
 
 ```{r}
-gender_m <- glmmTMB(gender_A ~ doyh * crop * month + 
-                                 (1|location/year), 
-                    family= binomial(), data = data3)
+paste("train sample size: ", dim(train)[1])
+paste("test sample size: ", dim(test)[1])
+```
+
+```{r}
+#Fitting a binary logistic regression
+model_logi <- glm(fem ~ doyh + crop + 
+                    month + height + weight, data = train, family = "binomial")
+#Model summary
+summary(model_logi)
+```
+
+```{r}
+# Pseudo R_squared values and Likelyhood ratio test
+rcompanion::nagelkerke(model_logi)
+```
+
+```{r}
+# Probabilities of female with doy
+visreg(model_logi, "doyh", scale="response", rug=2, 
+       xlab="Day of year",
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test()
+```
+
+```{r}
+# Probabilities of female with weight
+visreg(model_logi, "weight", scale="response", rug=2, 
+       xlab=expression(paste("Weight (g plant "^"-1",")")),
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test()
 ```
 
 
 ```{r}
-plot(gender_m)
+# Probabilities of female with weight
+visreg(model_logi, "height", scale="response", rug=2, 
+       xlab=expression(paste("Height (g plant "^"-1",")")),
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test()
 ```
 
 ```{r}
-emmeans(gender_m, ~ crop * month)
+# Probabilities of female with crop
+visreg(model_logi, "crop", scale="response", rug=2, 
+       xlab=expression(paste("Height (g plant "^"-1",")")),
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test()
+```
+
+```{r}
+# Probabilities of female with month
+visreg(model_logi, "month", scale="response", rug=2, 
+       xlab=expression(paste("Height (g plant "^"-1",")")),
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test()
 ```
 
 
 
+```{r}
+tidy(model_logi, exponentiate = TRUE, conf.level = 0.95) #odds ratio
+```
+
+```{r}
+# Calculate average marginal effect
+effects_logit_dia = margins::margins(model_logi)
+# Summary of marginal effect
+summary(effects_logit_dia)
+```
+
+```{r}
+plot(effects_logit_dia) #p
+```
+
+
+```{r}
+# predict the test dataset
+pred <- predict(model_logi, test, type="response") 
+predicted <- round(pred) # round of the value; >0.5 will convert to 
+                         # 1 else 0
+# Creating a contigency table
+tab <- table(Predicted = predicted, Reference = test$fem)
+tab
+```
+
+
+```{r}
+library(yardstick)
+# Creating a dataframe of observed and predicted data
+act_pred <- data.frame(observed = test$fem, predicted = 
+                      factor(predicted))
+# Calculating Accuracy
+accuracy_est <- accuracy(act_pred, observed, predicted)
+print(accuracy_est)
+```
+
+```{r}
+pred.rocr <- prediction(pred, test$fem)
+eval <- performance(pred.rocr, "acc")
+plot(eval)
+```
+
+```{r}
+# Identifying the best cutoff value that maximizes accuracy
+max <- which.max(slot(eval, "y.values")[[1]])
+acc <- slot(eval, "y.values")[[1]][max] #y.values are accuracy 
+                                        #measures
+cut <- slot(eval, "x.values")[[1]][max] #x.values are cutoff 
+                                        #measures
+print(c(Accuracy = acc, Cutoff = cut))
+```
 
 
 
+```{r}
+library(yardstick)
+# Creating a actual/observed vs predicted dataframe
+act_pred <- data.frame(observed = test$fem, predicted =  
+                       factor(predicted))
+# Calculating precision, recall and F1_score
+prec <- precision(act_pred, observed, predicted)
+rec <- recall(act_pred, observed, predicted)
+F1_score <- f_meas(act_pred, observed, predicted) #called f_measure
+print(prec)
+print(rec)
+print(F1_score)
+```
 
 
-
-
-
-
-
-
-
-
+```{r}
+perf_rocr <- performance(pred.rocr, measure = "auc",
+                         x.measure = "cutoff")
+perf_rocr@y.values[[1]] <- round(perf_rocr@y.values[[1]], digits = 
+                                 4)
+perf.tpr.fpr.rocr <- performance(pred.rocr, "tpr", "fpr")
+plot(perf.tpr.fpr.rocr, colorize=T, 
+     main = paste("AUC:", (perf_rocr@y.values)))
+abline(a = 0, b = 1)
+```
 
