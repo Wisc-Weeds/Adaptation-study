@@ -1,0 +1,376 @@
+---
+title: "weight"
+author: "Maxwel Coura Oliveira"
+date: "8/11/2021"
+output: html_document
+---
+
+
+###------------
+```{r}
+library(tidyverse)
+library(lubridate)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(tidytext)
+library(ggthemes)
+library(ggtext)
+library(patchwork)
+library(extrafont)
+library(showtext)
+showtext_auto()
+font_add_google("Roboto", "roboto") 
+```
+
+```{r}
+data <- read_csv("../data/data2.csv")
+```
+
+###--------------------------
+
+```{r}
+data %>% 
+  mutate(location = str_replace(location, "havelock", "lincoln")) %>% 
+  mutate(harvest = case_when(
+    location == "clay center" & doyh == 169 ~ "8/18/2018",
+    TRUE ~ harvest
+  )) -> data1
+```
+
+
+
+
+
+```{r}
+data1 %>% 
+  rename(month = planting) %>% 
+  mutate_at(c("year", "location"), as_factor) %>% 
+  mutate(crop = fct_recode(crop, 
+                           "bareground" = "fallow")) -> data2
+```
+
+
+
+
+
+```{r}
+model <- lmer(log(weight) ~ crop * month + 
+                                 (1|location/year), data = data2)
+```
+
+
+
+
+
+
+```{r}
+anova(model)
+```
+
+
+```{r}
+emmeans(model, ~ crop * month, type = "response") -> emmeans1
+```
+
+```{r}
+multcomp::cld(emmeans1, 
+              alpha=0.05, 
+              Letters=letters, 
+              adjust="none", reversed = TRUE) %>% 
+  as_tibble() -> weight
+```
+
+
+
+
+
+```{r}
+weight %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>%  
+  ggplot(aes(y = crop, 
+             x = response,
+             shape = month,
+             color = month)) +
+  scale_y_discrete(expand = c(0.1, 0.1)) +
+  geom_jitter(data = data2 %>% 
+                rename(response = weight) %>% 
+                mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")),
+#                filter(month == "First transplanting"), 
+              alpha = 0.01, aes(color = month, shape = month), size = 1,
+              position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_color_manual(values = c(2,1)) +
+  geom_text(aes(label = round(response,1), x = upper.CL + 130, color = month),
+            size = 8, fontface = "bold",
+            position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  geom_point(size = 2,
+             position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_x_continuous(limits = c(0,1201), breaks = seq(0, 1200, 300)) +
+  scale_shape_manual(values = c(1,16)) +
+  labs(x = expression(paste("Weight (g plant "^"-1",")")), 
+       y = NULL, color = NULL) +
+  annotate("text", x = 300, y = 1.7, 
+           label = "First cohort",
+           size = 7, color = 1,
+           fontface = "bold") + 
+  annotate("text", x = 300, y = 2.3, 
+           label = "Second cohort",
+           size = 7, color = 2,
+           fontface = "bold") + 
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none",
+        axis.text.y = element_markdown(size = 25),
+        axis.title = element_markdown(size = 30),
+        axis.text.x = element_markdown(size = 25),
+        legend.text = element_markdown(size = 25)) -> figA
+  
+
+#ggsave("figures/biomass.png", width = 4, height = 4)
+```
+
+
+
+
+
+```{r}
+model2 = lmer(log(height) ~ crop * month + 
+                                 (1|location/year), data = data2)
+anova(model2)
+```
+
+
+```{r}
+emmeans(model2, ~ crop * month, type = "response", cont="pairwise", adjust="none") -> emmeans2
+```
+
+
+```{r}
+multcomp::cld(emmeans2$emmeans, 
+              alpha=0.05, 
+              Letters=letters, 
+              adjust="none", reversed = TRUE) %>% 
+  as_tibble() -> height
+```
+
+```{r warning = FALSE}
+height %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>%
+  ggplot(aes(y = crop,
+             x = response,
+             shape = month,
+             color = month)) +
+  scale_y_discrete(expand = c(0.1, 0.1)) +
+  geom_jitter(data = data2 %>% 
+                rename(response = height) %>% 
+                mutate(crop = fct_recode(crop,
+          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")),
+#                filter(month == "First transplanting"), 
+              alpha = 0.02, aes(color = month, shape = month), size = 1,
+              position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_color_manual(values = c(2,1)) +
+  geom_text(aes(label = round(response,1), x = upper.CL + 20, color = month),
+            size = 8, fontface = "bold",
+            position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  geom_point(size = 2,
+             position = position_dodge2(width = 0.4, reverse = TRUE)) +
+  scale_shape_manual(values = c(1,16)) +
+#  scale_x_continuous(limits = c(0,300), breaks = c(0,25,50,75,100)) +
+  labs(x = expression(paste("Height (cm plant "^"-1",")")), 
+       y = NULL, color = NULL) +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none",
+        axis.text.y = element_markdown(size = 25),
+        axis.title = element_markdown(size = 30),
+        axis.text.x = element_markdown(size = 25),
+        legend.text = element_markdown(size = 25)) -> figB
+  
+
+#ggsave("figures/height.png", width = 4, height = 4)
+```
+
+
+
+```{r}
+(figA | figB) +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 30, hjust = 0, vjust = 0))
+
+ggsave("figures/Figure 3.png", width = 6, height = 3)
+```
+
+
+
+
+```{r eval=FALSE}
+wrap_elements(full = curve1) / (figure) / (figA | figB) +
+   plot_layout(heights = c(1.5, 1.25, 1.25))
+
+#ggsave("figures/combine 3.png", height = 9)
+```
+
+
+
+
+
+```{r}
+library(emoGG)
+```
+
+
+
+```{r}
+data2 %>% 
+  mutate(gender_A = case_when(
+    gender == "m" ~ 0,
+    gender == "f" ~ 1,
+    TRUE ~ NA_real_
+  )) %>% 
+  mutate_if(is_character, as.factor) %>% 
+  filter(!is.na(gender_A)) %>% 
+  filter(!is.na(doyh)) %>% 
+  filter(!is.na(weight)) %>% 
+  filter(!is.na(height)) %>% 
+  mutate(doyh = as.numeric(doyh)) %>% 
+  mutate(crop = fct_recode(crop, 
+                           "bareground" = "fallow")) -> data3
+```
+
+
+
+```{r}
+first <- tibble(crop = "bareground",
+                x = 200, y = 0.73,
+                label = "First cohort")
+second <- tibble(crop = "bareground",
+                 x = 235, y = 0.4,
+                label = "Second cohort")
+cohortf1 <- tibble(crop = "corn",
+                 x = 215, y = 0.94)
+cohortm1 <- tibble(crop = "corn",
+                 x = 215, y = 0.06)
+```
+
+
+```{r}
+data3 %>% 
+  ggplot(aes(x = doyh, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = month)) +
+  geom_emoji(data = cohortf1, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm1, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              se = TRUE, 
+              method.args=list(family="binomial", 
+                               type = "response", 
+                               trans = "plogis"),
+              stat = "smooth") +
+  theme_test(base_family = "roboto") +
+  facet_grid(~crop) +
+  scale_color_manual(values = c(2,1)) +
+  scale_fill_manual(values = c(2,1)) +
+  scale_x_continuous(limits = c(170, 260), 
+                     breaks = seq(170, 260, 15)) +
+  scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
+  labs(x = "Day of year", y = NULL) +
+  geom_text(data = first, mapping = aes(x = x, y = y), label = first$label,
+            size = 10, color = 1) +
+  geom_text(data = second, mapping = aes(x = x, y = y), label = second$label,
+            size = 10, color = 2) +
+  theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_doyh
+#  xlim(175, 270)
+
+ggsave("figures/fig.png", width = 9, height = 4)
+```
+
+```{r}
+cohortf2 <- tibble(crop = "corn",
+                 x = 92, y = 0.94)
+cohortm2 <- tibble(crop = "corn",
+                 x = 92, y = 0.06)
+```
+
+
+```{r}
+data3 %>% 
+  mutate(crop = fct_relevel(crop,
+                            levels = c("bareground", "corn", "soybean"))) %>% 
+  ggplot(aes(x = weight, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = month)) +
+  geom_emoji(data = cohortf2, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm2, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              se = FALSE, 
+              stat = "smooth") +
+  theme_test(base_family = "roboto") +
+  facet_grid(~crop, scales = "free") +
+  scale_color_manual(values = c(2,1)) +
+  scale_fill_manual(values = c(2,1)) +
+  scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
+  labs(x = expression(paste("Weight (g plant "^"-1",")")), y = NULL) +
+  theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_weight
+#  xlim(175, 270)
+
+ggsave("fig.png", width = 9, height = 4)
+```
+```{r}
+cohortf2 <- tibble(crop = "corn",
+                 x = 110, y = 0.94)
+cohortm2 <- tibble(crop = "corn",
+                 x = 110, y = 0.06)
+```
+
+
+```{r}
+data3 %>% 
+  mutate(crop = fct_relevel(crop,
+                            levels = c("bareground", "corn", "soybean"))) %>% 
+  ggplot(aes(x = height, y = gender_A)) +
+  geom_point(alpha = 0.1, aes(color = month)) +
+  geom_emoji(data = cohortf2, aes(x = x, y = y), emoji = "2640") +
+  geom_emoji(data = cohortm2, aes(x = x, y = y), emoji = "2642") +
+  geom_smooth(aes(color = month), 
+              method = "gam", 
+              se = FALSE, 
+              stat = "smooth") +
+  theme_test(base_family = "roboto") +
+  facet_grid(~crop) +
+  scale_color_manual(values = c(2,1)) +
+  scale_fill_manual(values = c(2,1)) +
+  scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
+  labs(x = expression(paste("Height (cm plant "^"-1",")")), y = NULL) +
+    theme(legend.position = "none",
+        axis.title = element_markdown(size = 35),
+        axis.text = element_markdown(size = 25),
+        strip.text = element_markdown(face = "bold", size = 30)) -> pl_height
+#  xlim(175, 270)
+
+ggsave("fig.png", width = 9, height = 4)
+```
+
+```{r}
+pl_doyh / pl_weight / pl_height
+
+ggsave("figures/Figure 4.png", width = 6, height = 8)
+```

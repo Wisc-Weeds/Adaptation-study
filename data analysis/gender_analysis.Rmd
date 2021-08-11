@@ -1,0 +1,224 @@
+---
+title: "gender"
+author: "Maxwel Coura Oliveira"
+date: "8/11/2021"
+output: html_document
+---
+
+
+
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(tidymodels)
+library(yardstick)
+library(broom)       # for making model summary tidy
+library(visreg)      # for potting logodds and probability 
+library(margins)     # to calculate Average Marginal Effects
+library(rcompanion)  # to calculate pseudo R2
+library(ROCR) 
+#https://towardsdatascience.com/modelling-binary-logistic-regression-using-tidymodels-library-in-r-part-1-c1bdce0ac055
+#https://towardsdatascience.com/modelling-binary-logistic-regression-using-r-research-oriented-modelling-and-interpretation-f67b3a954101
+```
+
+
+
+```{r}
+read_csv("../data/data2.csv") %>% 
+#  filter(location != "grant") %>% 
+  mutate(location = str_replace(location, "havelock", "lincoln")) %>% 
+  mutate(harvest = case_when(
+    location == "clay center" & doyh == 169 ~ "8/18/2018",
+    TRUE ~ harvest
+  )) -> data1
+```
+
+
+```{r}
+data1 %>% 
+  rename(month = planting,
+         planting = planting_1) %>% 
+  mutate(planting = mdy(planting),
+         harvest = mdy(harvest),
+         doyp = yday(planting),
+         doyh = yday(harvest)) %>% 
+  mutate_if(is_character, as_factor) %>% 
+  filter(!is.na(gender)) %>% 
+#  filter(!is.na(weight)) %>% 
+  mutate(fem = as_factor(if_else(gender == "f", 1, 0))) %>% 
+  mutate(crop = fct_recode(crop, 
+                           "bareground" = "fallow")) %>% 
+  filter(location != "grant") %>% 
+  dplyr::select(fem, gender, location, year, month, crop, height, weight, doyh) -> data2
+  na.omit(data2) -> data2
+```
+
+
+
+```{r}
+# Total number of rows in the data frame
+n <- nrow(data2)
+# Number of rows for the training set (80% of the dataset)
+n_train <- round(0.80 * n)
+# Create a vector of indices which is an 80% random sample
+set.seed(123)
+train_indices <- sample(1:n, n_train)
+# Subset the data frame to training indices only
+train <- data2[train_indices, ]
+# Exclude the training indices to create the test set
+test <- data2[-train_indices, ]
+```
+
+
+
+```{r}
+paste("train sample size: ", dim(train)[1])
+paste("test sample size: ", dim(test)[1])
+```
+
+
+```{r}
+library(recipes)
+recipe(fem ~ doyh + crop + month + height + weight, data = train) %>% 
+  recipes::step_dummy(all_nominal(), -all_outcomes()) -> recip1
+
+#preprocessing
+prepped_rec <- prep(recip1, verbose = TRUE, retain = TRUE )
+
+# new data set with juice
+juice <- juice(prepped_rec)
+
+# bake to see the preprocessed training data
+preproc_train <- recipes::bake(prepped_rec, new_data = NULL)
+glimpse(preproc_train)
+# bake to see the preprocessed testing data
+preproc_test <- recipes::bake(prepped_rec, new_data = test)
+glimpse(preproc_test)
+```
+
+
+```{r}
+#Fitting a binary logistic regression
+model_logi <- glm(fem ~ ., data = preproc_train, family = "binomial")
+#Model summary
+summary(model_logi)
+```
+
+```{r}
+# Pseudo R_squared values and Likelyhood ratio test
+rcompanion::nagelkerke(model_logi)
+```
+
+```{r}
+# Probabilities of female with doy
+visreg(model_logi, "doyh", scale="response", rug=2, 
+       xlab="Day of year",
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test() -> doyf
+```
+
+```{r}
+# Probabilities of female with weight
+visreg(model_logi, "weight", scale="response", rug=2, 
+       xlab=expression(paste("Weight (g plant "^"-1",")")),
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test() -> weight_f
+```
+
+
+```{r}
+# Probabilities of female with weight
+visreg(model_logi, "height", scale="response", rug=2, 
+       xlab=expression(paste("Height (g plant "^"-1",")")),
+       ylab="P(female)",
+       ylim = c(0,1)) +
+  theme_test() -> height_f
+```
+
+
+
+```{r}
+tidy(model_logi, exponentiate = TRUE, conf.level = 0.95) #odds ratio
+```
+
+```{r}
+# Calculate average marginal effect
+effects_logit_dia = margins(model_logi)
+# Summary of marginal effect
+summary(effects_logit_dia)
+#For example, the AME value of height is 0.0016 which can be interpreted as a unit increase in height value increases the probability of having female by 0.16%.
+```
+
+```{r}
+plot(effects_logit_dia) #p
+```
+
+
+```{r}
+# predict the preproc_test dataset
+pred <- predict(model_logi, preproc_test, type="response") 
+predicted <- round(pred) # round of the value; >0.5 will convert to 
+                         # 1 else 0
+# Creating a contigency table
+tab <- table(Predicted = predicted, Reference = preproc_test$fem)
+tab
+```
+
+
+```{r}
+library(yardstick)
+# Creating a dataframe of observed and predicted data
+act_pred <- data.frame(observed = preproc_test$fem, predicted = 
+                      factor(predicted))
+# Calculating Accuracy
+accuracy_est <- accuracy(act_pred, observed, predicted)
+print(accuracy_est)
+```
+
+```{r}
+pred.rocr <- prediction(pred, preproc_test$fem)
+eval <- performance(pred.rocr, "acc")
+plot(eval)
+```
+
+```{r}
+# Identifying the best cutoff value that maximizes accuracy
+max <- which.max(slot(eval, "y.values")[[1]])
+acc <- slot(eval, "y.values")[[1]][max] #y.values are accuracy 
+                                        #measures
+cut <- slot(eval, "x.values")[[1]][max] #x.values are cutoff 
+                                        #measures
+print(c(Accuracy = acc, Cutoff = cut))
+```
+
+
+
+```{r}
+library(yardstick)
+# Creating a actual/observed vs predicted dataframe
+act_pred <- data.frame(observed = preproc_test$fem, predicted =  
+                       factor(predicted))
+# Calculating precision, recall and F1_score
+prec <- precision(act_pred, observed, predicted)
+rec <- recall(act_pred, observed, predicted)
+F1_score <- f_meas(act_pred, observed, predicted) #called f_measure
+print(prec)
+print(rec)
+print(F1_score)
+```
+
+
+```{r}
+perf_rocr <- performance(pred.rocr, measure = "auc",
+                         x.measure = "cutoff")
+perf_rocr@y.values[[1]] <- round(perf_rocr@y.values[[1]], digits = 
+                                 4)
+perf.tpr.fpr.rocr <- performance(pred.rocr, "tpr", "fpr")
+plot(perf.tpr.fpr.rocr, colorize=T, 
+     main = paste("AUC:", (perf_rocr@y.values)))
+abline(a = 0, b = 1)
+```

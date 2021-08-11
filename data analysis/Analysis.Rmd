@@ -315,4 +315,186 @@ chisq.test(grant2$n)
 
 
 
+```{r}
+library(popbio)
+?logi.hist.plot()
+```
 
+
+```{r}
+data2 %>% 
+  mutate(gender_A = case_when(
+    gender == "m" ~ TRUE,
+    gender == "f" ~ FALSE,
+    TRUE ~ NA
+  )) %>% 
+  mutate_if(is_character, as.factor) %>% 
+  filter(!is.na(gender_A)) %>% 
+  mutate(doyh = as.numeric(doyh)) -> data3
+```
+
+```{r}
+logi.hist.plot(data3$weight, data3$gender_A, 
+               logi.mod = 1, boxp=FALSE, counts=FALSE, int= 10,
+               type = "hist", rug = FALSE, col="gray")
+
+ggsave("fig.png")
+```
+
+
+```{r}
+aq.trans$survived <- aq.trans$fate!="dead"
+a <- subset(aq.trans, leaf<50 & stage!="recruit", c(leaf,survived))
+logi.hist.plot(a$leaf,  a$survived,
+  type="hist", boxp=FALSE, counts=TRUE, int=10,
+  ylabel="Survival probability", ylabel2="Number of plants",
+  xlab="Number of leaves")
+b <- glm(survived ~ leaf, binomial, data=a)
+summary(b)
+```
+
+
+
+```{r}
+data2 %>% 
+  mutate(gender_A = case_when(
+    gender == "m" ~ 0,
+    gender == "f" ~ 1,
+    TRUE ~ NA_real_
+  )) %>% 
+  mutate_if(is_character, as.factor) %>% 
+  filter(!is.na(gender_A)) %>% 
+  filter(!is.na(doyh)) %>% 
+  filter(!is.na(weight)) %>% 
+  filter(!is.na(height)) %>% 
+  mutate(doyh = as.numeric(doyh)) -> data3
+```
+
+```{r}
+seq(min(mtcars$hp), max(mtcars$hp),len=100)
+```
+
+
+```{r}
+fit = glm(gender_A ~ doyh, data = data3, family=binomial)
+newdat <- data.frame(doyh=seq(min(data3$doyh), max(data3$doyh), len=length(data3$doyh)))
+newdat$vs = predict(fit, newdata=newdat, type="response")
+plot(gender_A ~ doyh, data=data3, col="red4")
+lines(gender_A ~ doyh, newdat, col="green4", lwd=2)
+```
+
+
+
+
+
+```{r}
+label1 <- tibble(ed = "10% flowering", 
+                   x = 2.35, y = 156.5, label = "June 01")
+rect1 <- tibble(ed = "50% flowering", 
+               x = 2.85, y = 195, xend = 2.7, yend = 199)
+
+label2 <- tibble(ed = "10% flowering", 
+                   x = 2.5, y = 186.5, label = "July 01")
+rect2 <- tibble(ed = "50% flowering",  
+               x = 3.05, y = 229, xend = 2.9, yend = 235)
+
+month <- tibble(ed = "50% flowering",
+                x = c(0.5, 0.5, 0.5, 0.5),
+                y = c(168, 197, 228.5, 259), 
+                label = c("June", "July", "August", "September"))
+
+label3 <- tibble(ed = "50% flowering", 
+                   x = 2.9, y = 240, label = "Second \ncohort")
+
+label4 <- tibble(ed = "50% flowering", 
+                   x = 2.7, y = 205, label = "First \ncohort")
+```
+
+
+```{r eval = FALSE, include=FALSE}
+result3 %>% 
+  mutate(ed = case_when(
+    ed == "10" ~ "10% flowering",
+    ed == "50" ~ "50% flowering",
+    ed == "90" ~ "90% flowering",
+    TRUE ~ "ed")) %>% 
+  mutate(crop = fct_recode(crop,
+          "<b style='color:#30123bFF;'>corn</b>" = "corn",
+          "<b style='color:#fb832d;'>bareground</b>" = "bareground",
+          "<b style='color:#28bbecff;'>soybean</b>" = "soybean")) %>% 
+  ggplot(aes(x = crop, y = estimate)) +
+  geom_segment(aes(x = 0.8, xend = 3.2, y = 153, yend = 153), 
+             color = 1,
+             alpha = 0.5) +
+  geom_segment(aes(x = 0.8, xend = 3.2, y = 183, yend = 183), 
+             color = 2,
+             alpha = 0.5) +
+  scale_x_discrete(expand = c(0.1, 0.1)) +
+  geom_rect(mapping=aes(xmin= 0.8, xmax= 3.2,
+                        ymin= 153, ymax= 183), 
+            fill = "#FFFFF0", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.8, xmax= 3.2,
+                        ymin= 183, ymax= 214), 
+            fill = "beige", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.8, xmax= 3.2,
+                        ymin= 214, ymax= 244), 
+            fill = "#F0FFF0", alpha=0.05) +
+  geom_rect(mapping=aes(xmin= 0.8, xmax= 3.2,
+                        ymin= 244, ymax= 274), 
+            fill = "#F8F8FF", alpha=0.5) +
+  geom_text(data = month, aes(x = x, y = y), label = month$label,
+            size = 2, color = c("#8B8000", "#80461b", 
+                                "darkgreen", "blue")) +
+  scale_color_manual(values = c(1, 2)) +
+  labs(x = NULL, y = "Day of year",
+       title = NULL) +
+  geom_curve(data = rect1, aes(x = x, y = y, 
+                               xend = xend, yend = yend),
+             arrow = arrow(length = unit(0.07, "inch")), 
+             color = 1,
+             size = 0.4, curvature = 0.3) + 
+  geom_curve(data = rect2, aes(x = x, y = y, 
+                               xend = xend, yend = yend),
+             color = 2,
+             arrow = arrow(length = unit(0.07, "inch")), 
+             size = 0.4, curvature = 0.3) + 
+  geom_text(data = label1, 
+            aes(x = x, y = y), 
+            size = 2, hjust = 0, angle = 270,
+            label = label1$label, color = 1) +
+  geom_text(data = label2, 
+            aes(x = x, y = y), 
+            size = 2, hjust = 0, angle = 270,
+            label = label2$label, color = 2) +
+  geom_text(data = label3, 
+            aes(x = x, y = y), 
+            size = 2, hjust = 0, 
+            label = label3$label, color = 2) +
+  geom_text(data = label4, 
+            aes(x = x, y = y), 
+            size = 2, hjust = 0, 
+            label = label4$label, color = 1) +
+  facet_grid(~ ed, scales = "free_y") +
+  geom_point(aes(color = month), 
+             size = 1,
+             position = position_dodge2(width = 0.4)) +
+  geom_linerange(aes(ymin = lower, ymax = upper, color = month), 
+                 size = 1.3, position = position_dodge2(width = 0.4)) +
+  coord_flip() +
+  theme_test(base_family = "roboto") +
+  theme(legend.position = "none",
+        strip.text = element_markdown(face = "bold"),
+        plot.title = element_markdown(),
+        plot.title.position = "plot",
+        axis.text.x = element_markdown(angle = 30),
+        axis.text.y = element_markdown()) -> figure
+
+#ggsave("figures/Combined1.png", width = 8, height = 4)
+```
+
+```{r eval = FALSE, include=FALSE}
+(wrap_elements(full = curv1 | curv2)) / wrap_elements(full = figure) +
+   plot_layout(heights = c(1.5, 1.5)) + plot_annotation(tag_levels = 'A')
+
+#ggsave("figures/Combined2.png", height = 6)
+```

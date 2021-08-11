@@ -344,6 +344,35 @@ package. The EDcomp function compares the ratio of cumulative flowering
 using t-statistics, where P-value \textless{} 0.05 indicates that we
 fail to reject the null hypothesis.
 
+Palmer amaranth gender was fitted to a binary logistic regression
+(Bangdiwala, 2018). Binary logistic regression is used for predicting
+binary classes, such gender of Palmer amaranth plants. Prior to the
+analysis, all missing values were removed from the dataset. Also, data
+from Grant was not used in this analysis due to the uniform plant
+harvesting at that location. The whole dataset was splitted into 80\%
+train and 20\% test data. The 80\% train is used for the model training
+and the rest 20\% is used for checking how the model generalized on
+unseen dataset. With 80\% dataset, a binary response variable, male (0)
+and female (1), was fitted to a generalized linear model (\emph{glm}
+function) including day of year harvest, height, weight, crop and month
+as independent variables. The model family was binomial with a logit
+function. The model fit was assessed through pseudo R squared values
+(McFadden, Cox and Snell, Cragg and Uhler) and likelihood ratio using
+\emph{nagelkerke} function (``rcompanion'' package). The marginal
+effects computation was performed with Average Marginal Effects at every
+observed value of x and average across the results (AMEs) (Leeper, 2017)
+using \emph{margins} function from ``margins'' package. The rest 20\%
+dataset was predicted using \emph{predict} function with a cutoff
+estimation for male or female using \emph{performance} function. The
+model quality prediction from the classification algorithm was measure
+with precision (\emph{precision} function), recall (\emph{recall}
+function) and F1 score (\emph{f\_meas} function) using ``yardstick''
+package. The precision determines the accuracy of positive predictions
+(female plants), recall determines the fraction of positives that were
+correctly identified, and F1 score is a weighted harmonic mean of
+precision and recall with the best score of 1 and the worst score of 0.
+F1 score conveys the balance between the precision and the recall.
+
 Palmer amaranth height and biomass were performed with a linear mixed
 model using \emph{lmer} function from ``lme4'' package (Bates et al.,
 2015). Plant height and biomass were transformed to meet model
@@ -358,9 +387,10 @@ from packages ``emmeans'' and ``multcomp'' (Hothorn et al., 2008).
 \section*{Results}\label{results}}
 \addcontentsline{toc}{section}{Results}
 
-\hypertarget{cumulative-flowering}{%
-\subsection*{Cumulative flowering}\label{cumulative-flowering}}
-\addcontentsline{toc}{subsection}{Cumulative flowering}
+\hypertarget{palmer-amaranth-cumulative-flowering}{%
+\subsection*{Palmer amaranth cumulative
+flowering}\label{palmer-amaranth-cumulative-flowering}}
+\addcontentsline{toc}{subsection}{Palmer amaranth cumulative flowering}
 
 Palmer amaranth growing in corn resulted in a longer flowering pattern
 compared to fallow and soybean at first cohort (Figure 2A). Nonetheless,
@@ -388,20 +418,46 @@ flowering, whereas Palmer amaranth reached 50\% flowering in corn (doy
 Palmer amaranth cumulative flowering occurred at same day in corn
 (260.9) and soybean (260.5; \emph{P} = 0.66).
 
-\hypertarget{height-and-biomass}{%
-\subsection*{Height and biomass}\label{height-and-biomass}}
-\addcontentsline{toc}{subsection}{Height and biomass}
+\hypertarget{palmer-amaranth-gender}{%
+\subsection*{Palmer amaranth gender}\label{palmer-amaranth-gender}}
+\addcontentsline{toc}{subsection}{Palmer amaranth gender}
+
+The model fit was 0.11, 0.14, 0.18 with using pseudo R squared test from
+McFadden, Cox and Snell, and Cragg and Uhler, respectively. The
+likelihood ratio test showed a p-value of \textless{} 0.00. The marginal
+effects showed that increasing a weight unit by 1 g increases the
+probability of having a female plant by 0.08\%. Similar trend is
+observed to height as well as doy, whereas the probability of being
+female increase by 0.16\% and 0.4\% when a unit of height (cm) and day
+increases.
+
+The model evaluation accuracy in the unseen 20\% dataset was 0.61 with a
+cutoff value for female and male plants of 0.49. The model
+classification showed a precision of 0.59, recall of 0.76, and a F1
+score of 0.66. In addition, the area under the curve was 0.61.
+
+\hypertarget{palmer-amaranth-height-and-biomass}{%
+\subsection*{Palmer amaranth height and
+biomass}\label{palmer-amaranth-height-and-biomass}}
+\addcontentsline{toc}{subsection}{Palmer amaranth height and biomass}
 
 Palmer amaranth accumulated more biomass when growing in fallow compared
 to Palmer amaranth growing in soybean and corn (Figure 3A). At first
-cohort time, Palmer amaranth biomass was 78.3 g plant-1, 26.4 g plant-1
-and 14.9 g plant-1 in fallow, soybean and corn, respectively. Moreover,
-Palmer amaranth produce less biomass at cohort time. Palmer amaranth
-growing in fallow resulted in 49.2 g plant-1, 3.4 g plant-1 in soybean
-and 1.4 g plant when growing in corn.
+cohort time, Palmer amaranth biomass was 75.5 g plant-1, 28.3 g plant-1
+and 16.3 g plant-1 in fallow, soybean and corn, respectively. At second
+cohort timing, Palmer amaranth produced 62.6 g plant in fallow, followed
+by 6.3 g plant in soybean, and 1.4 g plant in corn.
 
-The Palmer amaranth achieve 92.3 cm tall when growing at first cohort
-timing in corn (Figure 3B).
+Palmer amaranth height was more uniform across cohort timings, except
+when growing in corn (Figure 3B). Palmer amaranth achieve achieve 69.2
+cm tall when growing at first cohort timing in bareground, which was not
+different to 70.7 cm tall at second cohort timing (P = 0.74). In
+addition, no difference in Palmer amaranth height (69.3 cm) was found in
+soybean at first cohort compared to fallow (P \textgreater{} 0.75). At
+second cohort in soybean, Palmer amaranth was near to 10 cm lower
+compared to its first cohort time (P = 0.04). The tallest and smallest
+Palmer amaranth plants were found in corn. Palmer amaranth reached 85.2
+cm tall at first cohort and 38.2 cm at second cohort timings.
 
 \hypertarget{discussion}{%
 \section*{Discussion}\label{discussion}}
@@ -585,6 +641,12 @@ Resistance Is Widespread} in {Roadside Palmer Amaranth Populations}.
 \emph{PLOS ONE} 11, e0148748.
 doi:\href{https://doi.org/10.1371/journal.pone.0148748}{10.1371/journal.pone.0148748}.
 
+\leavevmode\hypertarget{ref-bangdiwala2018}{}%
+Bangdiwala, S. I. (2018). Regression: Binary logistic.
+\emph{International Journal of Injury Control and Safety Promotion} 25,
+336--338.
+doi:\href{https://doi.org/10.1080/17457300.2018.1486503}{10.1080/17457300.2018.1486503}.
+
 \leavevmode\hypertarget{ref-bates2015}{}%
 Bates, D., Mächler, M., Bolker, B., and Walker, S. (2015). Fitting
 {Linear Mixed}-{Effects Models Using} Lme4. \emph{Journal of Statistical
@@ -731,6 +793,10 @@ and Permingeat, H. R. (2017). Target-site resistance to acetolactate
 synthase ({ALS})-inhibiting herbicides in {Amaranthus} palmeri from
 {Argentina}. \emph{Pest Management Science} 73, 2578--2584.
 doi:\href{https://doi.org/10.1002/ps.4662}{10.1002/ps.4662}.
+
+\leavevmode\hypertarget{ref-leeper2017}{}%
+Leeper, T. J. (2017). Interpreting {Regression Results} using {Average
+Marginal Eﬀects} with {R}'s margins. 31.
 
 \leavevmode\hypertarget{ref-lindsay2017}{}%
 Lindsay, K., Popp, M., Norsworthy, J., Bagavathiannan, M., Powles, S.,
