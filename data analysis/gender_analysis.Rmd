@@ -151,6 +151,7 @@ effects_logit_dia = margins(model_logi)
 # Summary of marginal effect
 summary(effects_logit_dia)
 #For example, the AME value of height is 0.0016 which can be interpreted as a unit increase in height value increases the probability of having female by 0.16%.
+tidy(effects_logit_dia) 
 ```
 
 ```{r}
