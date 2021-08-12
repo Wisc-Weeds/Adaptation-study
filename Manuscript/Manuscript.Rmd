@@ -270,6 +270,6 @@ compiling it again using the traditional LaTeX commands.
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
 
-```{r, Figure-5, ref.label = "fig5", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Cumulative flowering of Palmer amaranth at first and second transplant timing (A) and day of year of 10, 50, and 90 cumulative flowering at first and second transplant timing (B)', out.width = "120mm", out.height = "180mm"}
+```{r, Figure-5, ref.label = "fig5", echo = FALSE, message = FALSE, fig.height=9, fig.width=4, fig.align='center', fig.cap='Cumulative flowering of Palmer amaranth at first and second transplant timing (A) and day of year of 10, 50, and 90 cumulative flowering at first and second transplant timing (B)', out.width = "170mm", out.height = "70mm"}
 # You can also refer to code chunks from above to place figures at the bottom.
 ```
