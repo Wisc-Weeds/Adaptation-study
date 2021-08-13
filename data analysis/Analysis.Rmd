@@ -498,3 +498,64 @@ result3 %>%
 
 #ggsave("figures/Combined2.png", height = 6)
 ```
+
+
+
+```{r eval=FALSE}
+adaptation_weather %>% 
+  filter(month %in% c(6, 7, 8, 9)) %>% 
+  group_by(month_lab, site, year) %>% 
+  summarise(pp = sum(pp)) %>% 
+  mutate(year = as.character(year),
+         highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
+         variable = if_else(highlight == TRUE, year, "NA")) %>% 
+  ggplot(aes(x = month_lab, y = pp)) +
+  geom_jitter(aes(color = variable), alpha = 0.2) +
+  scale_color_manual(values = c("red", "blue", "gray90")) +
+  geom_line(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp, group = 1), 
+             color = "red") +
+  geom_line(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp, group = 1), 
+             color = "blue") +
+  geom_point(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp), 
+             fill = "red", shape = 21, size = 3) +
+  geom_point(adaptation_weather %>% 
+               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+               group_by(site, month_lab) %>% 
+               summarise(pp = sum(pp)),
+             mapping = aes(x = month_lab, y = pp), 
+             fill = "blue", shape = 21, size = 3) +
+  geom_richtext(data = text3, aes(x = 2.6, y = 330), 
+            label = "Monthly sum precipitation <br>in <b style='color:red;'>2018</b> and <b style='color:blue;'>2019</b>", size = 2, 
+            label.color = NA, fill = NA) +
+  geom_richtext(data = text4, aes(x = 3.6, y = 320), 
+            label = "30 years <br>monthly sum <br>precipitation", size = 2, 
+             label.color = NA, fill = NA, color = "gray90") +
+  geom_curve(data = text4, 
+             x = 2.6, y = 310, 
+             xend = 2, yend = 320,
+             arrow = arrow(length = unit(0.07, "inch")), 
+             size = 0.4, curvature = -0.3, color = "gray90") + 
+  facet_grid(~ site) +
+  labs(x = NULL, y = "Precipitation (mm)") +
+  theme_test() +
+  theme(legend.position = "none",
+        strip.text = element_markdown(size = 25),
+        axis.text.y = element_markdown(size = 25),
+        axis.title = element_markdown(size = 25),
+        axis.text.x = element_markdown(size = 25),
+        legend.text = element_markdown(size = 25)) -> ppp
+
+ggsave("ppp.png", height = 3, width = 6)
+```

@@ -1,0 +1,136 @@
+---
+title: "table"
+author: "Maxwel Coura Oliveira"
+date: "8/13/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r include=FALSE}
+library(tidyverse)
+library(kableExtra)
+options(knitr.kable.NA = '')
+#library(reactablefmtr)
+#library(googlesheets4)
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+read_csv("../data/table.csv") %>% 
+  janitor::row_to_names(row_number = 1) %>% 
+  kable(booktabs = TRUE, caption = "Field study attributes ",
+        col.names = c("Attributes",
+                           "",
+                           "Arlington, WI",
+                           "Clay Center, NE",
+                           "Grant, NE",
+                      "Lincoln, NE", "Macomb, IL")) %>% 
+#  pack_rows(
+ #   index = c("Bareground" = 2, "Corn" = 4, "Soybean" = 8)) %>% 
+  kable_styling(font_size = 12, 
+                full_width = TRUE, 
+                position = "center",
+#                latex_options = "scale_down",
+                latex_options = c("striped", "hold_position")) %>% 
+  collapse_rows(columns = 1, latex_hline = "minor", valign = "middle") %>% 
+  row_spec(c(2, 4, 8), bold = T, color = "white", background = "gray90")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+library(extrafont)
+library(showtext)
+showtext_auto()
+font_add_google("Roboto", "roboto")
+```
+
+
+
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+table <- read_csv("../data/table.csv") %>% 
+  janitor::row_to_names(row_number = 1)
+```
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+options(reactable.theme = reactableTheme(
+  color = "black",
+  backgroundColor = "white",
+  borderColor = "black",
+  stripedColor = "black",
+  highlightColor = "hsl(233, 12%, 24%)",
+  inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+  selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+  pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+  pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
+))
+```
+
+
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+table %>% 
+  reactable(.,
+            theme = fivethirtyeight(font_family = "Arial"),
+            bordered = FALSE,
+            outlined = FALSE,
+            compact = TRUE,
+            fullWidth = TRUE,
+            wrap = TRUE,
+            pagination = FALSE,
+            columns = list(
+              X = colDef(name = ""
+              ))) %>% 
+  add_title(
+  title = "Table 1 - S",
+  font_size = 14
+) -> table_fig
+
+save_reactable(table_fig, "figures/Table 1.png")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
