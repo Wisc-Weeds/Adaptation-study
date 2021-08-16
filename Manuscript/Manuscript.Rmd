@@ -106,10 +106,10 @@ read_csv("../data/table.csv") %>%
                       "Lincoln, NE", "Macomb, IL")) %>% 
 #  pack_rows(
  #   index = c("Bareground" = 2, "Corn" = 4, "Soybean" = 8)) %>% 
-  kable_styling(font_size = 12, 
+  kable_styling(font_size = 10, 
                 full_width = FALSE, 
                 position = "center",
-                latex_options = c("scale_down", "striped", "hold_position")) %>% 
+                latex_options = c("scale_down", "hold_position")) %>% 
   collapse_rows(columns = 1, latex_hline = "none", valign = "middle") 
 ```
 
@@ -119,7 +119,7 @@ read_csv("../data/table.csv") %>%
 The field experimental unit were six adjacent 9.1 m wide (12 rows at 72.2 cm row spacing) by 10.7 m long. Each experimental unit was planted with corn or soybean, or under bareground condition. Palmer amaranth seedlings (potting mix + two seedlings) were and gently transferring to the ground (6 cm deep and 8 cm wide). Twenty-four plants were equidistantly placed (0.76 m apart) between rows within each agroecossystems. After a week, one was eliminated and one was kept. There were two transplant timing: first (June 1) and second (July 1). There were 24 Palmer amaranth plants in each experimental unit, with a total of 144 plants for each location. The study was repeated twice.  
 
 
-```{r table1, echo = FALSE, message=FALSE, fig.show = "hide"}
+```{r fig1, echo = FALSE, message=FALSE, fig.show = "hide"}
 knitr::include_graphics("../data analysis/weather/Figure 1.png")
 ```
 
@@ -133,12 +133,14 @@ The statistical analyses were performed using R statistical software version 4.0
 
 The cumulative Palmer amaranth flowering estimation was determined using a asymmetrical three parameter log logistic Weibull model of the drc package [@ritz2015].  
 
-$$Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))$$
+$Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))$
+
+
 In this model, *Y* is the Palmer amaranth cumulative flowering, *d* is the upper limit (set to 100), and *e* is the XXX, and *x* day of year (doy). 
 
 The doy for 10, 50, and 90% Palmer amaranth cumulative flowering were determined using the *ED* function of drc package. Also, the 10, 50, and 90% Palmer amaranth cumulative flowering were compared among agroecossystems and timings using the *EDcomp* function of drc package. The EDcomp function compares the ratio of cumulative flowering using t-statistics, where P-value < 0.05 indicates that we fail to reject the null hypothesis.  
 
-Palmer amaranth gender was fitted to a binary logistic regression [@bangdiwala2018]. Binary logistic regression is used for predicting binary classes, such gender of Palmer amaranth plants. Prior to the analysis, all missing values were removed from the dataset. Also, data from Grant was not used in this analysis due to the uniform plant harvesting at that location. The whole dataset was splitted into 80% train and 20% test data. The 80% train is used for the model training and the rest 20% is used for checking how the model generalized on unseen dataset. With 80% dataset, a binary response variable, male (0) and female (1), was fitted to a generalized linear model (*glm* function) including day of year harvest, height, weight, crop and month as independent variables. The model family was binomial with a logit function. The model fit was assessed through pseudo R squared values (McFadden, Cox and Snell, Cragg and Uhler) and likelihood ratio using *nagelkerke* function ("rcompanion" package). The marginal effects computation was performed with Average Marginal Effects at every observed value of x and average across the results (AMEs) [@leeper2017] using *margins* function from "margins" package. The rest 20% dataset was predicted using *predict* function with a cutoff estimation for male or female using *performance* function. The model quality prediction from the classification algorithm was measure with precision (*precision* function), recall (*recall* function) and F1 score (*f_meas* function) using "yardstick" package. The precision determines the accuracy of positive predictions (female plants), recall determines the fraction of positives that were correctly identified, and F1 score is a weighted harmonic mean of precision and recall with the best score of 1 and the worst score of 0. F1 score conveys the balance between the precision and the recall.
+Palmer amaranth gender was fitted to a binary logistic regression [@bangdiwala2018]. Binary logistic regression is used for predicting binary classes, such as the probability of female in dioecious plants. Prior to the analysis, all missing values were removed from the dataset. Also, data from Grant was not used in this analysis due to the uniform plant harvesting at that location. The whole dataset was splitted into 80% train and 20% test data. The 80% train is used for the model training and the rest 20% is used for checking how the model generalized on unseen dataset. With 80% dataset, a binary response variable, male (0) and female (1), was fitted to a generalized linear model (*glm* function) including day of year harvest, height, weight, crop and month as independent variables. The model family was binomial with a logit function. The model fit was assessed through pseudo R squared values (McFadden, Cox and Snell, Cragg and Uhler) and likelihood ratio using *nagelkerke* function ("rcompanion" package). The marginal effects computation was performed with Average Marginal Effects at every observed value of x and average across the results (AMEs) [@leeper2017] using *margins* function from "margins" package. The rest 20% dataset was predicted using *predict* function with a cutoff estimation for male or female using *performance* function. The model quality prediction from the classification algorithm was measure with precision (*precision* function), recall (*recall* function) and F1 score (*f_meas* function) using "yardstick" package. The precision determines the accuracy of positive predictions (female plants), recall determines the fraction of positives that were correctly identified, and F1 score is a weighted harmonic mean of precision and recall with the best score of 1 and the worst score of 0. F1 score conveys the balance between the precision and the recall.
 
 Palmer amaranth height and biomass were performed with a linear mixed model using *lmer* function from "lme4" package [@bates2015]. Plant height and biomass were transformed to meet model assumption of normality. In the model, agroecosystem (crop, soybean, bareground) was the fixed effect and year nested with location the random effects. Analysis of variance was performed with *anova* function from "car" package [@fox2018]. Marginal means and compact letter display were estimated with *emmeans* and *cld* from packages "emmeans" and "multcomp" [@hothorn2008].  
 
@@ -167,9 +169,32 @@ Palmer amaranth cumulative flowering at second cohort ranged from mid July to mi
 
 ## Palmer amaranth gender {-} 
 
-The model fit was 0.11, 0.14, 0.18 with using pseudo R squared test from McFadden, Cox and Snell, and Cragg and Uhler, respectively. The likelihood ratio test showed a p-value of < 0.00. The average marginal effects showed that increasing a weight unit by 1 g increases the probability of having a female plant by 0.08% (P = 0.01). Similar trend is observed to height as well as doy, whereas the probability of being female increase by 0.2% (P = 0.01) and 0.4% (P = 0.00) when a unit of height (cm) and day increases, respectively.  
+The model fit was 0.23, 0.32, 0.40 with using pseudo R squared test from McFadden, Cox and Snell, and Cragg and Uhler, respectively. The likelihood ratio test showed a p-value of < 0.00. The average marginal effects showed that Palmer amaranth growing in corn resulted in 14.5% less females plants (Table 2). Moreover, increasing a unit doy  increases the probability of having a female plant by 0.4% (Table 2 and Figure4A). Similar trend is observed to weight as well as height, whereas the probability of being female increase by 0.2% (Figure 4B) and 0.1% (Figure 4C) when a unit of weight (g) and height (cm) increases, respectively.  
 
-The model accuracy evaluation accuracy in the unseen 20% dataset was 0.61 with a cutoff value for female and male plants of 0.49. The model classification showed a precision of 0.59, recall of 0.76, and a F1 score of 0.66. In addition, the area under the curve was 0.61.  
+```{r echo = FALSE, warning = FALSE, message=FALSE}
+read_csv("../data/table_a.csv") -> table_a
+
+#names(table_a)[2] <- paste0(names(table_a)[2], 
+#                                footnote_marker_symbol(1))
+  
+table_a %>% 
+  kable(booktabs = TRUE, escape = TRUE, caption = "Average marginal means of gender logistic model. Factor pararemter values (e.g. crop) is shown related to soybean.") %>% 
+  kable_styling(font_size = 10, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("hold_position")) %>% 
+  collapse_rows(columns = 1, latex_hline = "none", valign = "middle") %>%
+  footnote(
+           alphabet = c("Average Marginal Effects.", "Standard Error."),
+           footnote_as_chunk = TRUE)
+```
+
+The model accuracy evaluation accuracy in the unseen 20% dataset was 0.62 with a cutoff value for female and male plants of 0.43. The model classification showed a precision of 0.64, recall of 0.66, and a F means score of 0.65. In addition, the area under the curve was 0.64.  
+
+
+
+
+
 
 ```{r fig2, echo = FALSE, message=FALSE, fig.show = "hide"}
 knitr::include_graphics("../data analysis/figures/Figure 3.png")

@@ -73,6 +73,7 @@ adaptation_weather %>%
          variable = if_else(highlight == TRUE, year, "NA")) -> adaptation_weather1
 ```
 
+
 ```{r}
 adaptation_weather1 %>% 
   filter(year %in% c(2018, 2019)) %>% 
@@ -104,14 +105,24 @@ adaptation_weather1 %>%
 
 ```{r}
 adaptation_weather %>% 
+  filter(month %in% c(6, 7, 8, 9)) %>% 
+  mutate(year = as.character(year),
+         highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
+         variable = if_else(highlight == TRUE, year, "NA")) %>% 
   mutate(site = fct_recode(site, 
                            "Arlington, WI" = "Arlington",
                            "Clay Center, NE" = "Clay Center",
                            "Grant, NE" = "Grant",
                            "Lincoln, NE" = "Lincoln",
-                           "Macomb, IL" = "Macomb")) -> adaptation_weather
+                           "Macomb, IL" = "Macomb")) -> adaptation_weather1
 ```
 
+```{r}
+adaptation_weather %>% 
+  filter(month %in% c(6, 7, 8, 9)) %>% 
+  group_by(month_lab, site) %>% 
+  summarise(tmean = mean(tmean))
+```
 
 
 
@@ -123,34 +134,31 @@ text2 <- tibble(site = "Clay Center, NE")
 
  
 ```{r}
-adaptation_weather %>% 
-  filter(month %in% c(6, 7, 8, 9)) %>% 
-  mutate(year = as.character(year),
-         highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
-         variable = if_else(highlight == TRUE, year, "NA")) %>% 
+adaptation_weather1 %>% 
   ggplot(aes(x = month_lab, y = tmean)) +
   geom_jitter(aes(color = variable), alpha = 0.05, shape = 0) +
   scale_color_manual(values = c("red", "blue", "gray90")) +
-  geom_line(adaptation_weather %>% 
-               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+  facet_grid(~ site) +
+  geom_line(adaptation_weather1 %>% 
+               filter(year %in% c(2018)) %>% 
                group_by(site, month_lab) %>% 
                summarise(tmean = mean(tmean)),
              mapping = aes(x = month_lab, y = tmean, group = 1), 
              color = "red") +
-  geom_line(adaptation_weather %>% 
-               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+  geom_line(adaptation_weather1 %>% 
+               filter(year %in% c(2019)) %>% 
                group_by(site, month_lab) %>% 
                summarise(tmean = mean(tmean)),
              mapping = aes(x = month_lab, y = tmean, group = 1), 
              color = "blue") +
-  geom_point(adaptation_weather %>% 
-               filter(month %in% c(6, 7, 8, 9) & year %in% c(2018)) %>% 
+  geom_point(adaptation_weather1 %>% 
+               filter(year %in% c(2018)) %>% 
                group_by(site, month_lab) %>% 
                summarise(tmean = mean(tmean)),
              mapping = aes(x = month_lab, y = tmean), 
              fill = "red", shape = 22, size = 3) +
-  geom_point(adaptation_weather %>% 
-               filter(month %in% c(6, 7, 8, 9) & year %in% c(2019)) %>% 
+  geom_point(adaptation_weather1 %>% 
+               filter(year %in% c(2019)) %>% 
                group_by(site, month_lab) %>% 
                summarise(tmean = mean(tmean)),
              mapping = aes(x = month_lab, y = tmean), 
@@ -167,17 +175,23 @@ adaptation_weather %>%
              arrow = arrow(length = unit(0.07, "inch")), 
              size = 0.4, curvature = -0.3, color = "gray90") + 
   scale_y_continuous(limits = c(0, 32)) +
-  facet_grid(~ site) +
   labs(x = NULL, y = "Temperature (C)") +
   theme_test() +
   theme(legend.position = "none",
-        strip.text = element_markdown(size = 28),
-        axis.text.y = element_markdown(size = 25),
-        axis.title = element_markdown(size = 27),
-        axis.text.x = element_markdown(size = 25),
-        legend.text = element_markdown(size = 25))  -> temp
+#        strip.text = element_markdown(size = 15, hjust = 0.5),
+#        axis.text.y = element_markdown(size = 25),
+#        axis.title = element_markdown(size = 27),
+#        axis.text.x = element_markdown(size = 25)#,
+#        legend.text = element_markdown(size = 25)
+        )  -> temp
 
 ggsave("weather.png", height = 3, width = 6)
+```
+
+
+```{r}
+
+
 ```
 
 ```{r}
@@ -192,8 +206,15 @@ adaptation_weather %>%
   summarise(pp = sum(pp)) %>% 
   mutate(year = as.character(year),
          highlight = ifelse(year %in% c("2018", "2019"), TRUE, FALSE),
-         variable = if_else(highlight == TRUE, year, "NA")) -> adaptation_pp
+         variable = if_else(highlight == TRUE, year, "NA")) %>% 
+  mutate(site = fct_recode(site, 
+                           "Arlington, WI" = "Arlington",
+                           "Clay Center, NE" = "Clay Center",
+                           "Grant, NE" = "Grant",
+                           "Lincoln, NE" = "Lincoln",
+                           "Macomb, IL" = "Macomb")) -> adaptation_pp
 ```
+
 
 
 ```{r message = FALSE, warning = FALSE}
@@ -209,10 +230,10 @@ ggplot(aes(x = month_lab, y = pp)) +
   scale_fill_manual(values = c("red", "blue")) +
   facet_grid(~ site) +
   geom_richtext(data = text3, aes(x = 2.6, y = 330), lineheight = 0.4, 
-            label = "Monthly sum precipitation <br>in <b style='color:red;'>2018</b> and <b style='color:blue;'>2019</b>", size = 6, 
+            label = "Monthly sum precipitation <br>in <b style='color:red;'>2018</b> and <b style='color:blue;'>2019</b>", size = 2, 
             label.color = NA, fill = NA) +
   geom_richtext(data = text4, aes(x = 3.6, y = 320), lineheight = 0.4, 
-            label = "30 years <br>monthly sum <br>precipitation", size = 6, 
+            label = "30 years <br>monthly sum <br>precipitation", size = 2, 
              label.color = NA, fill = NA, color = "gray90") +
   geom_curve(data = text4, 
              x = 2.6, y = 310, 
@@ -222,11 +243,12 @@ ggplot(aes(x = month_lab, y = pp)) +
   labs(x = NULL, y = "Precipitation (mm)") +
   theme_test() +
   theme(legend.position = "none",
-        strip.text = element_markdown(size = 28),
-        axis.text.y = element_markdown(size = 25),
-        axis.title = element_markdown(size = 27),
-        axis.text.x = element_markdown(size = 25),
-        legend.text = element_markdown(size = 25)) -> ppp
+#        strip.text = element_markdown(size = 28),
+#        axis.text.y = element_markdown(size = 25),
+#        axis.title = element_markdown(size = 27),
+#        axis.text.x = element_markdown(size = 25),
+#        legend.text = element_markdown(size = 25)
+  ) -> ppp
 
 ```
 

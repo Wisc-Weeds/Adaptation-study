@@ -324,42 +324,42 @@ locations in 2018 and 2019 (Correndo et al., 2021) (Figure 1)
 \caption{\label{tab:unnamed-chunk-2}Field study attributes }
 \centering
 \resizebox{\linewidth}{!}{
-\fontsize{12}{14}\selectfont
+\fontsize{10}{12}\selectfont
 \begin{tabular}[t]{lllllll}
 \toprule
 Attributes &  & Arlington, WI & Clay Center, NE & Grant, NE & Lincoln, NE & Macomb, IL\\
 \midrule
-\cellcolor{gray!6}{Bareground} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+Bareground &  &  &  &  &  & \\
 
  & Weed control & glyphosate & saflufenacil + imazethapyr + pyroxasulfone &  &  & \\
 
-\cellcolor{gray!6}{Corn} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+Corn &  &  &  &  &  & \\
 
  & Hybrid &  & DKC60-67 &  &  & \\
 
-\cellcolor{gray!6}{} & \cellcolor{gray!6}{Seeding rate} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{86487} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+ & Seeding rate &  & 86487 &  &  & \\
 
- & Weed control & glyphosate / S-metolachor & S-metolachlor + trazine + mesotrione, + bicyclopyrone &  &  & \\
+\multirow{-3}{*}{\raggedright\arraybackslash } & Weed control & glyphosate / S-metolachor & S-metolachlor + trazine + mesotrione, + bicyclopyrone &  &  & \\
 
-\cellcolor{gray!6}{Soybean} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+Soybean &  &  &  &  &  & \\
 
  & Variety & DSR-1950 & AG21X8 &  &  & \\
 
-\cellcolor{gray!6}{} & \cellcolor{gray!6}{Seeding rate} & \cellcolor{gray!6}{296400} & \cellcolor{gray!6}{321237} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+ & Seeding rate & 296400 & 321237 &  &  & \\
 
- & Weed control & glyphosate / S-metolachor & saflufenacil + imazethapyr + pyroxasulfone &  &  & \\
+\multirow{-3}{*}{\raggedright\arraybackslash } & Weed control & glyphosate / S-metolachor & saflufenacil + imazethapyr + pyroxasulfone &  &  & \\
 
-\cellcolor{gray!6}{Planting day} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{May 10 to 20} & \cellcolor{gray!6}{May 10 to 14} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+Planting day &  & May 10 to 20 & May 10 to 14 &  &  & \\
 
 Soil &  &  &  &  &  & \\
 
-\cellcolor{gray!6}{} & \cellcolor{gray!6}{Type} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{Crete Silt Loam} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+ & Type &  & Crete Silt Loam &  &  & \\
 
  & Ratio (sand-clay-silt) &  & 58-25-6.5 &  &  & \\
 
-\cellcolor{gray!6}{} & \cellcolor{gray!6}{pH} & \cellcolor{gray!6}{6.6} & \cellcolor{gray!6}{6.5} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{}\\
+ & pH & 6.6 & 6.5 &  &  & \\
 
- & Organic matter (\%) &  & 3 &  &  & \\
+\multirow{-4}{*}{\raggedright\arraybackslash } & Organic matter (\%) &  & 3 &  &  & \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -396,9 +396,11 @@ The cumulative Palmer amaranth flowering estimation was determined using
 a asymmetrical three parameter log logistic Weibull model of the drc
 package (Ritz et al., 2015).
 
-\[Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))\] In this model, \emph{Y} is
-the Palmer amaranth cumulative flowering, \emph{d} is the upper limit
-(set to 100), and \emph{e} is the XXX, and \emph{x} day of year (doy).
+\(Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))\)
+
+In this model, \emph{Y} is the Palmer amaranth cumulative flowering,
+\emph{d} is the upper limit (set to 100), and \emph{e} is the XXX, and
+\emph{x} day of year (doy).
 
 The doy for 10, 50, and 90\% Palmer amaranth cumulative flowering were
 determined using the \emph{ED} function of drc package. Also, the 10,
@@ -410,32 +412,33 @@ fail to reject the null hypothesis.
 
 Palmer amaranth gender was fitted to a binary logistic regression
 (Bangdiwala, 2018). Binary logistic regression is used for predicting
-binary classes, such gender of Palmer amaranth plants. Prior to the
-analysis, all missing values were removed from the dataset. Also, data
-from Grant was not used in this analysis due to the uniform plant
-harvesting at that location. The whole dataset was splitted into 80\%
-train and 20\% test data. The 80\% train is used for the model training
-and the rest 20\% is used for checking how the model generalized on
-unseen dataset. With 80\% dataset, a binary response variable, male (0)
-and female (1), was fitted to a generalized linear model (\emph{glm}
-function) including day of year harvest, height, weight, crop and month
-as independent variables. The model family was binomial with a logit
-function. The model fit was assessed through pseudo R squared values
-(McFadden, Cox and Snell, Cragg and Uhler) and likelihood ratio using
-\emph{nagelkerke} function (``rcompanion'' package). The marginal
-effects computation was performed with Average Marginal Effects at every
-observed value of x and average across the results (AMEs) (Leeper, 2017)
-using \emph{margins} function from ``margins'' package. The rest 20\%
-dataset was predicted using \emph{predict} function with a cutoff
-estimation for male or female using \emph{performance} function. The
-model quality prediction from the classification algorithm was measure
-with precision (\emph{precision} function), recall (\emph{recall}
-function) and F1 score (\emph{f\_meas} function) using ``yardstick''
-package. The precision determines the accuracy of positive predictions
-(female plants), recall determines the fraction of positives that were
-correctly identified, and F1 score is a weighted harmonic mean of
-precision and recall with the best score of 1 and the worst score of 0.
-F1 score conveys the balance between the precision and the recall.
+binary classes, such as the probability of female in dioecious plants.
+Prior to the analysis, all missing values were removed from the dataset.
+Also, data from Grant was not used in this analysis due to the uniform
+plant harvesting at that location. The whole dataset was splitted into
+80\% train and 20\% test data. The 80\% train is used for the model
+training and the rest 20\% is used for checking how the model
+generalized on unseen dataset. With 80\% dataset, a binary response
+variable, male (0) and female (1), was fitted to a generalized linear
+model (\emph{glm} function) including day of year harvest, height,
+weight, crop and month as independent variables. The model family was
+binomial with a logit function. The model fit was assessed through
+pseudo R squared values (McFadden, Cox and Snell, Cragg and Uhler) and
+likelihood ratio using \emph{nagelkerke} function (``rcompanion''
+package). The marginal effects computation was performed with Average
+Marginal Effects at every observed value of x and average across the
+results (AMEs) (Leeper, 2017) using \emph{margins} function from
+``margins'' package. The rest 20\% dataset was predicted using
+\emph{predict} function with a cutoff estimation for male or female
+using \emph{performance} function. The model quality prediction from the
+classification algorithm was measure with precision (\emph{precision}
+function), recall (\emph{recall} function) and F1 score (\emph{f\_meas}
+function) using ``yardstick'' package. The precision determines the
+accuracy of positive predictions (female plants), recall determines the
+fraction of positives that were correctly identified, and F1 score is a
+weighted harmonic mean of precision and recall with the best score of 1
+and the worst score of 0. F1 score conveys the balance between the
+precision and the recall.
 
 Palmer amaranth height and biomass were performed with a linear mixed
 model using \emph{lmer} function from ``lme4'' package (Bates et al.,
@@ -515,19 +518,44 @@ Palmer amaranth cumulative flowering occurred at same day in corn
 \subsection*{Palmer amaranth gender}\label{palmer-amaranth-gender}}
 \addcontentsline{toc}{subsection}{Palmer amaranth gender}
 
-The model fit was 0.11, 0.14, 0.18 with using pseudo R squared test from
+The model fit was 0.23, 0.32, 0.40 with using pseudo R squared test from
 McFadden, Cox and Snell, and Cragg and Uhler, respectively. The
 likelihood ratio test showed a p-value of \textless{} 0.00. The average
-marginal effects showed that increasing a weight unit by 1 g increases
-the probability of having a female plant by 0.08\% (P = 0.01). Similar
-trend is observed to height as well as doy, whereas the probability of
-being female increase by 0.2\% (P = 0.01) and 0.4\% (P = 0.00) when a
-unit of height (cm) and day increases, respectively.
+marginal effects showed that Palmer amaranth growing in corn resulted in
+14.5\% less females plants (Table 2). Moreover, increasing a unit doy
+increases the probability of having a female plant by 0.4\% (Table 2 and
+Figure4A). Similar trend is observed to weight as well as height,
+whereas the probability of being female increase by 0.2\% (Figure 4B)
+and 0.1\% (Figure 4C) when a unit of weight (g) and height (cm)
+increases, respectively.
+
+\begin{table}[!h]
+
+\caption{\label{tab:unnamed-chunk-3}Average marginal means of gender logistic model. Factor pararemter values (e.g. crop) is shown related to soybean.}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{lrrrrrr}
+\toprule
+Term & AME & SE & Lower & Upper & Z-score & P-value\\
+\midrule
+crop\_bareground & -0.048 & 0.054 & -0.154 & 0.059 & -0.876 & 0.381\\
+
+crop\_corn & -0.148 & 0.052 & -0.250 & -0.046 & -2.842 & 0.004\\
+
+doyh & 0.004 & 0.001 & 0.003 & 0.006 & 4.959 & 0.000\\
+
+height & 0.002 & 0.001 & 0.001 & 0.003 & 2.953 & 0.003\\
+
+weight & 0.001 & 0.000 & 0.000 & 0.001 & 2.179 & 0.029\\
+\bottomrule
+\multicolumn{7}{l}{\rule{0pt}{1em}\textsuperscript{a} Average Marginal Effects. \textsuperscript{b} Standard Error.}\\
+\end{tabular}
+\end{table}
 
 The model accuracy evaluation accuracy in the unseen 20\% dataset was
-0.61 with a cutoff value for female and male plants of 0.49. The model
-classification showed a precision of 0.59, recall of 0.76, and a F1
-score of 0.66. In addition, the area under the curve was 0.61.
+0.62 with a cutoff value for female and male plants of 0.43. The model
+classification showed a precision of 0.64, recall of 0.66, and a F means
+score of 0.65. In addition, the area under the curve was 0.64.
 
 \hypertarget{discussion}{%
 \section*{Discussion}\label{discussion}}
@@ -715,6 +743,15 @@ traditional LaTeX commands.
 \hypertarget{figures}{%
 \section*{Figures}\label{figures}}
 \addcontentsline{toc}{section}{Figures}
+
+\begin{figure}
+
+{\centering \includegraphics[width=160mm,height=100mm]{../data analysis/weather/Figure 1} 
+
+}
+
+\caption{Mean average temperature (C) and montly sum precipitation (mm) at Arlington, WI, Clay Center, NE, Grant, NE, Lincoln, NE and Macomb, IL}\label{fig:Figure-1}
+\end{figure}
 
 \begin{figure}
 
