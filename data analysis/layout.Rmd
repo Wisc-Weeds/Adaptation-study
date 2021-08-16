@@ -1,0 +1,70 @@
+---
+title: "layout"
+author: "Maxwel Coura Oliveira"
+date: "8/16/2021"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggimage)
+library(ggtext)
+```
+
+
+```{r}
+read_csv("../data/layout.csv") %>% 
+  janitor::row_to_names(row_number = 1) %>% 
+  mutate(distance = as.double(distance)) %>% 
+  mutate(emoji = case_when(
+    crop == "corn" ~ "https://img.icons8.com/color/48/000000/corn.png",
+    crop == "soybean" ~ "https://img.icons8.com/color/48/000000/soy.png",
+    TRUE ~ NA_character_)) %>% 
+  mutate(weed = "https://hotemoji.com/images/emoji/0/1gqjxj81p5mvj0.png") -> layout
+```
+
+
+
+```{r}
+layout %>% 
+  ggplot(aes(x = row, y = distance)) +
+  facet_grid(~crop) +
+#  geom_point() +
+#  scale_x_discrete(limits = c(-0.5, 4.5)) +
+  geom_image(data = layout,
+               aes(image=weed)) +
+  geom_image(data = layout %>% filter(crop == "corn"),
+               aes(x = 0.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "corn"),
+               aes(x = 1.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "corn"),
+               aes(x = 2.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "corn"),
+               aes(x = 3.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "corn"),
+               aes(x = 4.5, image=emoji)) +
+  labs(x= NULL, y = NULL) +
+  theme_test() +
+  theme(axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        strip.text = element_markdown(size = 18),
+        panel.background = element_rect(fill = "#f7e4d7")) -> fig1
+```
+
+```{r}
+library(ggimage)
+fig1 +
+  geom_image(data = layout %>% filter(crop == "soybean"),
+               aes(x = 0.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "soybean"),
+               aes(x = 1.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "soybean"),
+               aes(x = 2.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "soybean"),
+               aes(x = 3.5, image=emoji)) +
+  geom_image(data = layout %>% filter(crop == "soybean"),
+               aes(x = 4.5, image=emoji))
+  
+ggsave("figures/layout.png", height = 4, width = 9)
+```
+
