@@ -188,12 +188,6 @@ adaptation_weather1 %>%
 ggsave("weather.png", height = 3, width = 6)
 ```
 
-
-```{r}
-
-
-```
-
 ```{r}
 text3 <- tibble(site = "Grant, NE")
 text4 <- tibble(site = "Lincoln, NE")

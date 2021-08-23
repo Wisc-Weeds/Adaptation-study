@@ -138,3 +138,38 @@ ggsave("figures/layout.png", height = 4, width = 9)
 
 
 
+
+```{r}
+library(png)
+library(ggpubr)
+```
+
+
+```{r}
+june <- png::readPNG("figures/image.png")
+july <- png::readPNG("figures/july.png")
+```
+
+
+```{r}
+# Plot with background image
+ggplot() +
+ background_image(june) -> junef
+
+ggplot() +
+ background_image(july) -> julyf
+```
+
+
+```{r}
+library(patchwork)
+```
+
+```{r}
+junef + julyf +
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(size = 12, hjust = 0, vjust = 0))
+
+ggsave("figures/field.png", width = 7)
+```
+
