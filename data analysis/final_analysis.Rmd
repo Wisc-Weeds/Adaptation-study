@@ -53,6 +53,11 @@ data1 %>%
                            "bareground" = "fallow")) -> data2
 ```
 
+```{r}
+data %>% 
+  filter(location == "grant" & planting...4 == "July")
+```
+
 
 
 
@@ -557,7 +562,7 @@ wrap_elements(full = fig1) / wrap_elements(full = fig2) +
   plot_annotation(tag_levels = 'A') & 
   theme(plot.tag = element_text(size = 30, hjust = 0, vjust = 0))
 
-ggsave("figures/Figure 2.png", width = 6, height = 6)
+ggsave("figures/Figure 4.png", width = 6, height = 6)
 ```
 
 

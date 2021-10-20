@@ -185,18 +185,17 @@ and length according to article type.
 
 Palmer amaranth (\emph{Amaranthus palmeri} S. Watson) is currently
 ranked as one of the most economically detrimental weed species to
-cropping systems in the United States (ADD CITATION; WSSA Survey
-Perhaps). Unmanaged Palmer amaranth plants compete for water, light, and
-nutrients, which can drastically impact crop yields (Berger et al.,
-2015). For example, Palmer amaranth has been documented to reduce up to
-91\%, 68\%, and 54\% corn (Massinga et al., 2001), soybean (Klingaman
-and Oliver, 1994), and cotton (Morgan et al., 2001) yields,
-respectively. Moreover, Palmer amaranth has shown a remarkable capacity
-to evolve resistance to herbicides. To date, Palmer amaranth has evolved
-resistance to eight herbicide sites of action (Heap, 2021), increasing
-the weed management complexity (Lindsay et al., 2017). Thus, Palmer
-amaranth poses an economical and environmental risk to sustainable
-agriculture.
+cropping systems in the United States (Van Wychen, 2020). Unmanaged
+Palmer amaranth plants compete for water, light, and nutrients, which
+can drastically impact crop yields (Berger et al., 2015). For example,
+Palmer amaranth has been documented to reduce up to 91\%, 68\%, and 54\%
+corn (Massinga et al., 2001), soybean (Klingaman and Oliver, 1994), and
+cotton (Morgan et al., 2001) yields, respectively. Moreover, Palmer
+amaranth has shown a remarkable capacity to evolve resistance to
+herbicides. To date, Palmer amaranth has evolved resistance to eight
+herbicide sites of action (Heap, 2021), increasing the weed management
+complexity (Lindsay et al., 2017). Thus, Palmer amaranth poses an
+economical and environmental risk to sustainable agriculture.
 
 Palmer amaranth is a fast growing summer annual forb indigenous to the
 Sonoran Desert (Sauer, 1957). The species would eventually emerge as a
@@ -216,13 +215,13 @@ manure (Hartzler and Anderson, 2016), animals (Farmer et al., 2017). The
 dispersal capacity of Palmer amaranth makes the species one of the most
 successful cases of weed adaptation to current cropping systems.
 
-Light and temperature are likely the main environment requirements for
-Palmer amaranth successful grow and development (CITATION). Palmer
-amaranth is reported with an extended germination period (Jha et al.,
-2010). Germination of Palmer amaranth is triggered by 18 C soil
-temperature (Keeley et al., 1987), and optimal germination and biomass
-production occur at 35/30 C day and night temperatures (Guo and
-Al-Khatib, 2003). In addition, Palmer amaranth establishment is
+Light and temperature are the main environment requirements for Palmer
+amaranth successful grow and development (Jha et al., 2010). Palmer
+amaranth is reported with an extended germination period (Ward et al.,
+2013). Germination of Palmer amaranth was triggered by 18 C soil
+temperature at 5 cm depth (Keeley et al., 1987), and optimal germination
+and biomass production occurred at 35/30 C day and night temperatures
+(Guo and Al-Khatib, 2003). In addition, Palmer amaranth establishment is
 human-mediated by tillage timings and preemergence-applied herbicides
 (Chahal et al., 2021), which can result in weed germination shifts
 (Sbatella and Wilson, 2010). Water has not shown to limit Palmer
@@ -233,16 +232,16 @@ were heavier, less dormant, and prompt for germination (Matzrafi et al.,
 2021). Growing conditions and management practices also influence Palmer
 amaranth sex dimorphism and flowering pattern (Korres et al., 2017;
 Rumpa et al., 2019). Therefore, Palmer amaranth has shown plasticity to
-evolve and adapt under selection pressure. The continuous global
-temperature warming is likely impact agriculture and promote niches for
-Palmer amaranth invasion/adaptation into new habitats. Currently, it is
-estimated that the greatest climatic risk of Palmer amaranth
-establishment are agronomic crops in Australia and Sub-Sahara Africa
-(Kistner and Hatfield, 2018). Temperature is a key factor limiting
-Palmer amaranth expansion to cooler geographies (Briscoe Runquist et
-al., 2019); however, under future climate change Palmer amaranth is
-likely to expand northward into Canada and Northern Europe (Kistner and
-Hatfield, 2018; Briscoe Runquist et al., 2019).
+evolve and fast adapt under selection pressure. Palmer amaranth
+invasion/adaptation into new habitats is likely to increase with the
+global temperature warming. Currently, it is estimated that the greatest
+climatic risk of Palmer amaranth establishment are agronomic crops in
+Australia and Sub-Sahara Africa (Kistner and Hatfield, 2018).
+Temperature is a key factor limiting Palmer amaranth expansion to cooler
+geographies (Briscoe Runquist et al., 2019); however, under future
+climate change Palmer amaranth is likely to expand northward into Canada
+and Northern Europe (Kistner and Hatfield, 2018; Briscoe Runquist et
+al., 2019).
 
 Palmer amaranth is already found in agronomic crops of South America
 (Larran et al., 2017; Küpper et al., 2017) and Southern Europe (Milani
@@ -308,9 +307,11 @@ selected for this study. Three weeks prior to the onset of the field
 experiments, seeds were planted in plastic trays containing potting-mix.
 Emerged seedlings (1 cm) were transplanted into 200 cm-3 plastic pots (a
 plant pot-1). Palmer amaranth seedlings were supplied with adequate
-water and kept under greenhouse conditions at Arlington, Clay Center,
-Lincoln, and Macomb; and kept outdoors in Grant until the 2-3 leaf stage
-(5 to 8 cm height) when they were transported to the field.
+water and kept under greenhouse conditions at the University of
+Wisconsin-Madison, University of Nebraska-Lincoln, and Western Illinois
+University; and kept outdoors in the Perkins extension office at Grant,
+NE until the 2-3 leaf stage (5 to 8 cm height) when they were
+transported to the field.
 
 \vspace{0.4cm}
 
@@ -430,9 +431,11 @@ and compact letter display were estimated with \emph{emmeans} and
 \emph{cld} from packages ``emmeans'' and ``multcomp'' (Hothorn et al.,
 2008).
 
-The cumulative Palmer amaranth flowering estimation was determined using
-an asymmetrical three parameter log logistic Weibull model of the drc
-package (Ritz et al., 2015).
+The Palmer amaranth flowering timing was estimated as cumulative
+flowering across all location. Dataset was nested but id did not include
+Grant, NE. Palmer amaranth cumulative flowering estimation was
+determined using an asymmetrical three parameter log logistic Weibull
+model of the drc package (Ritz et al., 2015).
 
 \[Y(x) = 0 + (d-0) exp (-exp(b(log(x)-e)))\]
 
@@ -459,24 +462,25 @@ complete dataset was splitted into 80\% train and 20\% test data. The
 checking how the model generalized on unseen dataset. With 80\% dataset,
 a binary response variable, male (0) and female (1), was fitted to a
 generalized linear model (\emph{glm} function) including day of year
-harvest, height, weight, crop and month as independent variables. The
-model family was binomial with a logit function. The model fit was
-assessed through pseudo R-squared values (McFadden, Cox and Snell, Cragg
-and Uhler) and likelihood ratio using \emph{nagelkerke} function
-(``rcompanion'' package). The marginal effects computation was performed
-with Average Marginal Effects at every observed value of x and average
-across the results (AMEs) (Leeper, 2017) using \emph{margins} function
-from ``margins'' package. The rest 20\% dataset was predicted using
-\emph{predict} function with a cutoff estimation for male or female
-using \emph{performance} function. The model quality prediction from the
-classification algorithm was measured with precision (\emph{precision}
-function), recall (\emph{recall} function) and F1 score (\emph{f\_meas}
-function) using the ``yardstick'' package. The precision determines the
-accuracy of positive predictions (female plants), recall determines the
-fraction of positives that were correctly identified, and F1 score is a
-weighted harmonic mean of precision and recall with the best score of 1
-and the worst score of 0. F1 score conveys the balance between the
-precision and the recall.
+harvest, height, weight, crop and month as independent variables
+(without interaction). The model family was binomial with a logit
+function. The model fit was assessed through pseudo R-squared values
+(McFadden, Cox and Snell, Cragg and Uhler) and likelihood ratio using
+\emph{nagelkerke} function (``rcompanion'' package). The marginal
+effects computation was performed with Average Marginal Effects (AMEs)
+at every observed value of x and average across the results (Leeper,
+2017) using \emph{margins} function from ``margins'' package. The rest
+20\% dataset was predicted using \emph{predict} function with a cutoff
+estimation for male or female using \emph{performance} function. The
+model quality prediction from the classification algorithm was measured
+with precision (\emph{precision} function), recall (\emph{recall}
+function) and F1-score (\emph{f\_meas} function) using the ``yardstick''
+package. The precision determines the accuracy of positive predictions
+(female plants), recall determines the fraction of positives that were
+correctly identified, and F1-score is a weighted harmonic mean of
+precision and recall with the best score of 1 and the worst score of 0.
+F1-score conveys the balance between the precision and the recall
+(Yacouby and Axman, 2020).
 
 \hypertarget{results}{%
 \section*{Results}\label{results}}
@@ -653,29 +657,30 @@ migration to its non-native habitat is an essential strategy to minimize
 weed impact into agroecossystem (Davis et al., 2015).
 
 An ecological approach to reduce seed production in Palmer amaranth is
-understanding its flowering pattern. Our study suggests that Palmer
-amaranth flowering pattern was slightly influenced by cropping systems
-and cohort timings. Palmer amaranth growing in bareground and corn
-resulted in the overall shortest and longest flowering pattern,
-respectively. When growing in soybean, Palmer amaranth flowering pattern
-was similar to bareground at first cohort but similar to corn at second
-cohort timing. Plant flowering initiation is complex and depends on
-biological and ecological factors (Lang, 1965). We hypothesize that when
-growing in high competition (e.g., second cohort), Palmer amaranth
-plants tend to initiate flowering early, as well as having an extended
-flowering pattern. Early flower initiation is plant strategy when
-growing in stress conditions. For example, when growing under water
-stress, early flowering in Palmer amaranth resulted in a mismatch
-between female and male plants by seven days (Mesgaran et al., 2021). A
-mismatch in Palmer amaranth male and female flowering period can
-minimize plant outcross, and thus reduce plant seed production. Sex
-dimorphism manipulation is considered a potential ecological pest
-control (McFarlane et al., 2018; Schliekelman et al., 2005).
+understanding its flowering window. Our study suggests that Palmer
+amaranth flowering was slightly influenced by cropping systems and
+cohort timings. Palmer amaranth growing in bareground and corn resulted
+in the overall shortest and longest flowering window, respectively. When
+growing in soybean, Palmer amaranth flowering window was similar to
+bareground at first cohort but similar to corn at second cohort timing.
+Plant flowering initiation is complex and depends on biological and
+ecological factors (Lang, 1965). We hypothesize that when growing in
+high competition (e.g., second cohort), Palmer amaranth plants tend to
+initiate flowering early, as well as having an extended flowering
+window. Early flower initiation is plant strategy when growing in stress
+conditions. For example, when growing under water stress, early
+flowering in Palmer amaranth resulted in a mismatch between female and
+male plants by seven days (Mesgaran et al., 2021). A mismatch in Palmer
+amaranth male and female flowering period can minimize plant outcross,
+and thus reduce plant seed production and exchange of resistant alleles
+(Jhala et al., 2021). Sex dimorphism manipulation is considered a
+potential ecological pest control (McFarlane et al., 2018; Schliekelman
+et al., 2005).
 
 The mechanisms of sex-determination in plant species is intriguing and
 arouse the curiosity of many scientists, including Charles Darwin
 (Darwin, 1888). In our study, the gender model performance was decent
-(AIC 0.64) considering the plant flowering biology. A 1:1 male and
+(AIC 0.64) considering the biology of plant flowering. A 1:1 male and
 female sex ratio is a general evolutionary stable strategy for plant
 species perpetuation (Fisher, 1930). However, a slight deviation from
 1:1 sex ratio might occur in some dioecious species. For example, the
@@ -777,7 +782,7 @@ traditional LaTeX commands.
 
 }
 
-\caption{Mean average temperature (C) and montly sum precipitation (mm) at Arlington, WI, Clay Center, NE, Grant, NE, Lincoln, NE and Macomb, IL}\label{fig:Figure-1}
+\caption{Mean average temperature (C) and total montly precipitation (mm) at Arlington, WI, Clay Center, NE, Grant, NE, Lincoln, NE and Macomb, IL}\label{fig:Figure-1}
 \end{figure}
 
 \begin{figure}
@@ -786,7 +791,7 @@ traditional LaTeX commands.
 
 }
 
-\caption{Palmer amaranth adaptation study layout of a transplanting time. Twenty-four Palmer amaranth plants were place 76.2 cm apart in each crop}\label{fig:Figure-2}
+\caption{Palmer amaranth adaptation study layout of a plant cohort timing. Twenty-four Palmer amaranth plants were place 76.2 cm apart in each experimental unit}\label{fig:Figure-2}
 \end{figure}
 
 \begin{figure}
@@ -800,7 +805,7 @@ traditional LaTeX commands.
 
 \begin{figure}
 
-{\centering \includegraphics[width=150mm,height=150mm]{../data analysis/figures/Figure 5} 
+{\centering \includegraphics[width=150mm,height=150mm]{../data analysis/figures/Figure 4} 
 
 }
 
@@ -809,7 +814,7 @@ traditional LaTeX commands.
 
 \begin{figure}
 
-{\centering \includegraphics[width=170mm,height=70mm]{../data analysis/figures/Figure 6} 
+{\centering \includegraphics[width=170mm,height=70mm]{../data analysis/figures/Figure 5} 
 
 }
 
@@ -818,7 +823,7 @@ traditional LaTeX commands.
 
 \begin{figure}
 
-{\centering \includegraphics[width=150mm,height=90mm]{../data analysis/figures/Figure 4} 
+{\centering \includegraphics[width=150mm,height=90mm]{../data analysis/figures/Figure 6} 
 
 }
 
@@ -974,6 +979,14 @@ Jha, P., Norsworthy, J. K., Riley, M. B., and Bridges, W. (2010). Annual
 {Palmer Amaranth} ({Amaranthus} palmeri) {Seeds Retrieved} from {Soil}.
 \emph{Weed Science} 58, 426--432.
 doi:\href{https://doi.org/10.1614/WS-D-09-00038.1}{10.1614/WS-D-09-00038.1}.
+
+\leavevmode\hypertarget{ref-jhala2021}{}%
+Jhala, A. J., Norsworthy, J. K., Ganie, Z. A., Sosnoskie, L. M., Beckie,
+H. J., Mallory-Smith, C. A., Liu, J., Wei, W., Wang, J., and
+Stoltenberg, D. E. (2021). Pollen-mediated gene flow and transfer of
+resistance alleles from herbicide-resistant broadleaf weeds. \emph{Weed
+Technology} 35, 173--187.
+doi:\href{https://doi.org/10.1017/wet.2020.101}{10.1017/wet.2020.101}.
 
 \leavevmode\hypertarget{ref-keeley1987}{}%
 Keeley, P. E., Carter, C. H., and Thullen, R. J. (1987). Influence of
@@ -1245,6 +1258,12 @@ J., and Norsworthy, J. K. (2018). Phenology of {Five Palmer} amaranth
 {Arkansas}. \emph{Weed Science} 66, 457--469.
 doi:\href{https://doi.org/10.1017/wsc.2018.12}{10.1017/wsc.2018.12}.
 
+\leavevmode\hypertarget{ref-vanwychen2020}{}%
+Van Wychen, L. (2020). 2020 {Survey} of the most common and troublesome
+weeds in grass crops, pasture, and turf in the {United States} and
+{Canada}. Available at:
+\url{https://wssa.net/wp-content/uploads/2020-Weed-Survey_grass-crops.xlsx}.
+
 \leavevmode\hypertarget{ref-wang1992}{}%
 Wang, J. L., Klessig, D. F., and Berry, J. O. (1992). Regulation of {C4
 Gene Expression} in {Developing Amaranth Leaves}. \emph{The Plant Cell}
@@ -1262,6 +1281,14 @@ Webster, T. M., and Grey, T. L. (2015). Glyphosate-{Resistant Palmer
 Amaranth} ({Amaranthus} palmeri) {Morphology}, {Growth}, and {Seed
 Production} in {Georgia}. \emph{Weed Science} 63, 264--272.
 doi:\href{https://doi.org/10.1614/WS-D-14-00051.1}{10.1614/WS-D-14-00051.1}.
+
+\leavevmode\hypertarget{ref-yacouby2020}{}%
+Yacouby, R., and Axman, D. (2020). Probabilistic {Extension} of
+{Precision}, {Recall}, and {F1 Score} for {More Thorough Evaluation} of
+{Classification Models}. in \emph{Proceedings of the {First Workshop} on
+{Evaluation} and {Comparison} of {NLP Systems}} ({Online}: {Association
+for Computational Linguistics}), 79--91.
+doi:\href{https://doi.org/10.18653/v1/2020.eval4nlp-1.9}{10.18653/v1/2020.eval4nlp-1.9}.
 
 \leavevmode\hypertarget{ref-yu2021}{}%
 Yu, E., Blair, S., Hardel, M., Chandler, M., Thiede, D., Cortilet, A.,

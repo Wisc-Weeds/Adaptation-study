@@ -35,7 +35,9 @@ data %>%
   mutate(harvest = case_when(
     location == "clay center" & doyh == 169 ~ "8/18/2018",
     TRUE ~ harvest
-  )) -> data1
+  )) %>% 
+  janitor::clean_names() %>% 
+  rename(month = planting_4) -> data1
 ```
 
 
@@ -44,7 +46,7 @@ data %>%
 
 ```{r}
 data1 %>% 
-  rename(month = planting) %>% 
+#  rename(month = planting) %>% 
   mutate_at(c("year", "location"), as_factor) %>% 
   mutate(crop = fct_recode(crop, 
                            "bareground" = "fallow")) -> data2
@@ -82,11 +84,22 @@ multcomp::cld(emmeans1,
 ```
 
 
+```{r}
+weight %>% 
+  mutate(crop = fct_relevel(crop, 
+                           levels = c("bareground", "corn", "soybean"))) %>% 
+  ggplot(aes(y = crop, 
+             x = response,
+             shape = month,
+             color = month))
+```
 
 
 
 ```{r}
 weight %>% 
+  mutate(crop = fct_relevel(crop, 
+                           levels = c("bareground", "corn", "soybean"))) %>% 
   mutate(crop = fct_recode(crop,
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
           "<b style='color:#fb832d;'>bareground</b>" = "bareground",
@@ -96,6 +109,8 @@ weight %>%
              shape = month,
              color = month)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
+  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
   geom_jitter(data = data2 %>% 
                 rename(response = weight) %>% 
                 mutate(crop = fct_recode(crop,
@@ -105,9 +120,7 @@ weight %>%
 #                filter(month == "First transplanting"), 
               alpha = 0.01, aes(color = month, shape = month), size = 1,
               position = position_dodge2(width = 0.4, reverse = TRUE)) +
-  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
-                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
-  scale_color_manual(values = c(2,1)) +
+  scale_color_manual(values = c(2, "#333333")) +
   geom_text(aes(label = round(response,1), x = upper.CL + 130, color = month),
             size = 8, fontface = "bold",
             position = position_dodge2(width = 0.4, reverse = TRUE)) +
@@ -119,7 +132,7 @@ weight %>%
        y = NULL, color = NULL) +
   annotate("text", x = 300, y = 1.7, 
            label = "First cohort",
-           size = 7, color = 1,
+           size = 7, color = "#333333",
            fontface = "bold") + 
   annotate("text", x = 300, y = 2.3, 
            label = "Second cohort",
@@ -160,8 +173,12 @@ multcomp::cld(emmeans2$emmeans,
   as_tibble() -> height
 ```
 
+
+
 ```{r warning = FALSE}
 height %>% 
+  mutate(crop = fct_relevel(crop, 
+                           levels = c("bareground", "corn", "soybean"))) %>% 
   mutate(crop = fct_recode(crop,
           "<b style='color:#fb832d;'>bareground</b>" = "bareground",
           "<b style='color:#30123bFF;'>corn</b>" = "corn",
@@ -171,6 +188,8 @@ height %>%
              shape = month,
              color = month)) +
   scale_y_discrete(expand = c(0.1, 0.1)) +
+  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
+                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
   geom_jitter(data = data2 %>% 
                 rename(response = height) %>% 
                 mutate(crop = fct_recode(crop,
@@ -180,9 +199,7 @@ height %>%
 #                filter(month == "First transplanting"), 
               alpha = 0.02, aes(color = month, shape = month), size = 1,
               position = position_dodge2(width = 0.4, reverse = TRUE)) +
-  geom_linerange(aes(xmin = lower.CL, xmax = upper.CL),
-                 position = position_dodge2(width = 0.4, reverse = TRUE)) +
-  scale_color_manual(values = c(2,1)) +
+  scale_color_manual(values = c(2,"#333333")) +
   geom_text(aes(label = round(response,1), x = upper.CL + 20, color = month),
             size = 8, fontface = "bold",
             position = position_dodge2(width = 0.4, reverse = TRUE)) +
@@ -281,14 +298,14 @@ data3 %>%
               stat = "smooth") +
   theme_test(base_family = "roboto") +
   facet_grid(~crop) +
-  scale_color_manual(values = c(2,1)) +
-  scale_fill_manual(values = c(2,1)) +
+  scale_color_manual(values = c(2,"#333333")) +
+  scale_fill_manual(values = c(2,"#333333")) +
   scale_x_continuous(limits = c(170, 260), 
                      breaks = seq(170, 260, 15)) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = "Day of year", y = NULL) +
   geom_text(data = first, mapping = aes(x = x, y = y), label = first$label,
-            size = 10, color = 1) +
+            size = 10, color = "#333333") +
   geom_text(data = second, mapping = aes(x = x, y = y), label = second$label,
             size = 10, color = 2) +
   theme(legend.position = "none",
@@ -322,8 +339,8 @@ data3 %>%
               stat = "smooth") +
   theme_test(base_family = "roboto") +
   facet_grid(~crop, scales = "free") +
-  scale_color_manual(values = c(2,1)) +
-  scale_fill_manual(values = c(2,1)) +
+  scale_color_manual(values = c(2,"#333333")) +
+  scale_fill_manual(values = c(2,"#333333")) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = expression(paste("Weight (g plant "^"-1",")")), y = NULL) +
   theme(legend.position = "none",
@@ -356,8 +373,8 @@ data3 %>%
               stat = "smooth") +
   theme_test(base_family = "roboto") +
   facet_grid(~crop) +
-  scale_color_manual(values = c(2,1)) +
-  scale_fill_manual(values = c(2,1)) +
+  scale_color_manual(values = c(2,"#333333")) +
+  scale_fill_manual(values = c(2,"#333333")) +
   scale_y_continuous( breaks = seq(0, 1, by = 0.2)) +
   labs(x = expression(paste("Height (cm plant "^"-1",")")), y = NULL) +
     theme(legend.position = "none",
@@ -372,5 +389,5 @@ ggsave("fig.png", width = 9, height = 4)
 ```{r}
 pl_doyh / pl_weight / pl_height
 
-ggsave("figures/Figure 4.png", width = 6, height = 8)
+ggsave("figures/Figure 3.png", width = 6, height = 8)
 ```

@@ -33,7 +33,10 @@ read_csv("../data/data2.csv") %>%
   mutate(harvest = case_when(
     location == "clay center" & doyh == 169 ~ "8/18/2018",
     TRUE ~ harvest
-  )) -> data1
+  )) %>% 
+  janitor::clean_names() %>% 
+  rename(planting = planting_4,
+         planting_1 = planting_9) -> data1
 ```
 
 
@@ -111,21 +114,27 @@ model_logi <- glm(fem ~ ., data = preproc_train, family = "binomial")
 summary(model_logi)
 ```
 
+
+
 ```{r}
 # Pseudo R_squared values and Likelyhood ratio test
 rcompanion::nagelkerke(model_logi)
 ```
+
+
 
 ```{r}
 # Probabilities of female with doy
 visreg(model_logi, "doyh", scale="response", rug=2, gg=TRUE,
        xlab="Day of year",
        ylab="P(female)",
-       line = list(col="1"),
+       line = list(col="#333333"),
        fill=list(fill= "green", alpha = 0.2),
-       points=list(size=1, col = 1, pch=1),
+       points=list(size=1, col = "#333333", pch=1),
        ylim = c(0,1)) -> doy_f
 ```
+
+
 ```{r}
 doy_f +
   scale_y_continuous(limits = c(0, 1)) +
@@ -134,7 +143,7 @@ doy_f +
   geom_emoji(aes(x = 220, y = 0.95), emoji = "2640") +
   geom_emoji(aes(x = 220, y = 0.05), emoji = "2642") -> doyf
 
-ggsave("figures/fig2.png")
+#ggsave("figures/fig2.png")
 ```
 
 
@@ -143,9 +152,9 @@ ggsave("figures/fig2.png")
 visreg(model_logi, "weight", scale="response", rug=2, gg = TRUE,
        xlab=expression(paste("Weight (g plant "^"-1",")")),
        ylab="P(female)",
-       line = list(col="1"),
+       line = list(col="#333333"),
        fill=list(fill= "green", alpha = 0.2),
-       points=list(size=1, col = 1, pch=1),
+       points=list(size=1, col = "#333333", pch=1),
        ylim = c(0,1)) -> weight_f
 ```
 ```{r}
@@ -156,7 +165,7 @@ weight_f +
   geom_emoji(aes(x = 105, y = 0.95), emoji = "2640") +
   geom_emoji(aes(x = 105, y = 0.05), emoji = "2642") -> weightf
 
-ggsave("figures/fig1.png")
+#ggsave("figures/fig1.png")
 ```
 
 
@@ -165,9 +174,9 @@ ggsave("figures/fig1.png")
 visreg(model_logi, "height", scale="response", rug=2, gg = TRUE,
        xlab=expression(paste("Height (cm plant "^"-1",")")),
        ylab="P(female)",
-       line = list(col="1"),
+       line = list(col="#333333"),
        fill=list(fill= "green", alpha = 0.2),
-       points=list(size=1, col = 1, pch=1),
+       points=list(size=1, col = "#333333", pch=1),
        ylim = c(0,1)) -> height_f
 height_f
 ```
@@ -182,7 +191,7 @@ height_f +
   geom_emoji(aes(x = 105, y = 0.95), emoji = "2640") +
   geom_emoji(aes(x = 105, y = 0.05), emoji = "2642") -> heightf
 
-ggsave("figures/fig.png")
+#ggsave("figures/fig.png")
 ```
 
 
@@ -193,7 +202,7 @@ doyf + weightf + heightf +
   plot_annotation(tag_levels = 'A') & 
   theme(plot.tag = element_text(size = 10, hjust = 0, vjust = 0))
 
-ggsave("figures/Figure 4.png", width = 9, height = 3)
+ggsave("figures/Figure 5.png", width = 9, height = 3)
 ```
 
 

@@ -170,6 +170,6 @@ junef + julyf +
   plot_annotation(tag_levels = 'A') & 
   theme(plot.tag = element_text(size = 12, hjust = 0, vjust = 0))
 
-ggsave("figures/field.png", width = 7)
+ggsave("figures/Figure 6.png", width = 7)
 ```
 
